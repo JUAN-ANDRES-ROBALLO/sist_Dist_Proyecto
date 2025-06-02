@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - usuarios
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: agrodb
+      POSTGRES_USER: agro
+      POSTGRES_PASSWORD: agro123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  usuarios:
+    build: ./usuarios
+    env_file:
+      - ./usuarios/.env
+    volumes:
+      - ./usuarios:/app
+    depends_on:
+      - postgres
+      - rabbitmq
+    command: ["./entrypoint.sh"]
+volumes:
+  pgdata:
