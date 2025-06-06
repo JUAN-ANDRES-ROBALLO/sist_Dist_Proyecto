@@ -1,5 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head><title>Usuarios</title></head>
-<body><h1>Servicio Usuarios OK</h1></body>
+<head>
+  <title>Registro de Usuario</title>
+</head>
+<body>
+  <h1>Registrar Usuario</h1>
+  <form id="formRegistro">
+    Cédula: <input type="text" name="cedula" id="cedula"><br>
+    Nombre: <input type="text" name="nombre" id="nombre"><br>
+    Email: <input type="email" name="email" id="email"><br>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <p id="resultado"></p>
+
+  <script>
+    document.getElementById('formRegistro').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const data = {
+        cedula: document.getElementById('cedula').value,
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value
+      };
+
+      const response = await fetch('/usuarios/api/registro/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      document.getElementById('resultado').innerText = result.status || result.error;
+    });
+  </script>
+</body>
 </html>
