@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Guardar el token en localStorage
+                localStorage.setItem('userToken', data.token);
+                alert('Login exitoso');
+                // Redirigir a homepage de usuarios
+                location.href = '/';
+            } else {
+                alert(data.error || 'Login fallido');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Login</h1>
+    <input type="text" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <button onclick="location.href='/'">Volver</button>
+</body>
+</html>
+
