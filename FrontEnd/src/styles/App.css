@@ -43,12 +43,12 @@
 
 /* Layout principal */
 .main-container {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Avenir', Arial, sans-serif;
   background: #f5f5e6;
-  padding-top: 80px; /* Igual a la altura del header fijo */
 }
 
 body, html {
@@ -311,4 +311,42 @@ body, html {
   background: #fff;
   color: #23472a;
   border: 1px solid #23472a;
+}
+
+/* Estilos para navegación */
+.nav span {
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+.nav span:hover {
+  color: #4CAF50;
+}
+
+.nav span.active {
+  color: #4CAF50;
+  font-weight: bold;
+  border-bottom: 2px solid #4CAF50;
+}
+
+.dropdown-content span {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-content span:hover {
+  background-color: #f5f5f5;
+  color: #4CAF50;
+}
+
+.content {
+  min-height: calc(100vh - 200px); /* Ajusta según la altura de tu header y footer */
+  padding: 2rem 0;
+  background-color: #f8f9fa;
 }
