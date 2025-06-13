@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import LoginModal from './components/LoginModal'
@@ -24,6 +24,34 @@ const Home = () => {
 function App() {
   const [showLogin, setShowLogin] = useState(false)
   const [currentPage, setCurrentPage] = useState('home')
+
+  useEffect(() => {
+    switch (currentPage) {
+      case 'home':
+        document.title = 'Inicio';
+        break;
+      case 'nosotros':
+        document.title = 'Nosotros';
+        break;
+      case 'cultivos':
+        document.title = 'Cultivos';
+        break;
+      case 'maquinaria':
+        document.title = 'Maquinaria';
+        break;
+      case 'procesos':
+        document.title = 'Procesos';
+        break;
+      case 'optimizacion':
+        document.title = 'Optimización';
+        break;
+      case 'reportes':
+        document.title = 'Reportes';
+        break;
+      default:
+        document.title = 'AGROUY'; // Título por defecto si la página no se reconoce
+    }
+  }, [currentPage]);
 
   const renderPage = () => {
     switch(currentPage) {
