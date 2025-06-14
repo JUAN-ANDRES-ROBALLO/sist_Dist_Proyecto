@@ -8,7 +8,7 @@ export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
   return (
     <header className="header">
       <div className="logo">
-        <img src="/src/assets/icons/vite.svg" alt="Logo AGROUY" style={{ height: '40px', marginRight: '10px' }} />
+        <img src="/src/assets/icons/logo_agrouy.png" alt="Logo AgroUY" style={{ height: '60px', marginRight: '10px' }} />
         <span 
           onClick={() => handleNavigation('home')} 
           style={{ cursor: 'pointer' }}
