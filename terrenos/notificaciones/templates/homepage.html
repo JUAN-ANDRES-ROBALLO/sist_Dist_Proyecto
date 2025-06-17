@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notificaciones</title>
+    <script>
+        const userToken = localStorage.getItem('userToken');
+        if (!userToken) {
+            alert('Debe loguearse primero.');
+            window.location.href = 'http://localhost:8000/';
+        }
+
+        async function cargarNotificaciones() {
+            const response = await fetch('/api/notificaciones/', {
+                headers: {
+                    'X-User-Token': userToken
+                }
+            });
+            const data = await response.json();
+            const lista = document.getElementById('lista-notificaciones');
+            lista.innerHTML = '';
+            data.forEach(notif => {
+                const item = document.createElement('li');
+                item.innerHTML = `${notif.descripcion} (${notif.fecha_creacion}) 
+                <button onclick="eliminarNotificacion(${notif.id})">Eliminar</button>`;
+                lista.appendChild(item);
+            });
+        }
+
+        async function eliminarNotificacion(id) {
+            const response = await fetch(`/api/notificaciones/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-User-Token': userToken
+                }
+            });
+            const data = await response.json();
+            alert(data.message || data.error);
+            location.reload();
+        }
+
+        window.onload = function() {
+            cargarNotificaciones();
+        };
+    </script>
+</head>
+<body>
+    <h1>Notificaciones</h1>
+
+    <ul id="lista-notificaciones"></ul>
+
+    <br>
+    <button onclick="location.href='http://localhost:8000/'">Volver a Homepage</button>
+</body>
+</html>
+

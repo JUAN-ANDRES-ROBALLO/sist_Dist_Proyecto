@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gestion_agricola
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  usuarios:
+    build: ./usuarios
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  terrenos:
+    build: ./terrenos
+    ports:
+      - "8002:8002"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  maquinaria:
+    build: ./maquinaria
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  notificaciones:
+    build: ./notificaciones
+    ports:
+      - "8004:8004"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - usuarios
+      - terrenos
+      - maquinaria
+      - notificaciones
+
+volumes:
+  postgres-data:
+

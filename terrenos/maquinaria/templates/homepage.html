@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homepage - Maquinaria</title>
+    <script>
+        const userToken = localStorage.getItem('userToken');
+        if (!userToken) {
+            alert('Debe loguearse primero.');
+            window.location.href = 'http://localhost:8000/';
+        }
+    </script>
+</head>
+<body>
+    <h1>App Registro Venta y Servicio de Maquinaria</h1>
+
+    <button onclick="location.href='/mi_maquinaria.html'">Mi Maquinaria</button>
+    <button onclick="location.href='/venta.html'">Maquinaria en Venta</button>
+    <button onclick="location.href='/servicio.html'">Maquinaria en Servicio</button>
+    <br><br>
+    <button onclick="location.href='http://localhost:8000/'">Volver a Homepage</button>
+</body>
+</html>
+
