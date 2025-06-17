@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import LoginModal from './components/LoginModal'
 import Nosotros from './components/Nosotros'
+import CultivosServicios from './components/CultivosServicios'
 import './styles/App.css'
 
 // Componente para la página de inicio
@@ -60,7 +61,7 @@ function App() {
       case 'nosotros':
         return <Nosotros />;
       case 'cultivos':
-        return <div>Cultivos</div>;
+        return <CultivosServicios />;
       case 'maquinaria':
         return <div>Maquinaria</div>;
       case 'procesos':
@@ -75,16 +76,14 @@ function App() {
   }
 
   return (
-    <>
-      <div className="main-container">
-        <Header setShowLogin={setShowLogin} setCurrentPage={setCurrentPage} currentPage={currentPage} />
-        <main className="content">
-          {renderPage()}
-        </main>
-        {showLogin && <LoginModal setShowLogin={setShowLogin} />}
-      </div>
-      <Footer />
-    </>
+    <div className="main-container">
+      <Header setShowLogin={setShowLogin} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+      <main className="content">
+        {renderPage()}
+      </main>
+      {showLogin && <LoginModal setShowLogin={setShowLogin} />}
+      <Footer setCurrentPage={setCurrentPage} />
+    </div>
   )
 }
 
