@@ -1,6 +1,6 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100vw;
+  min-height: 100vh;
   padding: 0;
   text-align: center;
 }
@@ -43,7 +43,7 @@
 
 /* Layout principal */
 .main-container {
-  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Avenir', Arial, sans-serif;
@@ -419,6 +419,7 @@ body, html {
 }
 
 .content {
-  min-height: calc(100vh - 200px); /* Ajusta según la altura de tu header y footer */
+  flex: 1 0 auto;
+  min-height: 0;
   background-color: #f8f9fa;
 }
