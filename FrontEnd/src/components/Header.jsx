@@ -35,7 +35,7 @@ export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
         <span 
           onClick={() => handleNavigation('nosotros')}
           className={currentPage === 'nosotros' ? 'active' : ''}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', color: '#fff' }}
         >
           Nosotros
         </span>
