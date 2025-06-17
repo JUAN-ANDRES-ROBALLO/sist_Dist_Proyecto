@@ -1,119 +1,161 @@
-.nosotros-container {
+/* Fondo y contenedor principal */
+.nosotros-container.pro {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5rem 1.5rem 2rem 1.5rem;
+  background: linear-gradient(135deg, #f5f5e6 60%, #e0f2e9 100%);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.08);
+  padding-top: 100px;
 }
 
 .nosotros-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3.5rem;
 }
 
 .nosotros-header h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
+  font-size: 2.7rem;
+  color: #23472a;
+  margin-bottom: 0.7rem;
+  letter-spacing: 1px;
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #7f8c8d;
+  font-size: 1.25rem;
+  color: #4e6e5d;
+  font-weight: 500;
 }
 
 .mision-vision {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .card {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  background: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.10);
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-left: 5px solid #23472a;
 }
-
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.13);
 }
-
 .card h2 {
-  color: #2c3e50;
+  color: #23472a;
   margin-bottom: 1rem;
 }
 
 .valores {
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .valores h2 {
   text-align: center;
   margin-bottom: 2rem;
-  color: #2c3e50;
+  color: #23472a;
 }
 
 .valores-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
 }
 
 .valor-item {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
+  background: #e0f2e9;
+  padding: 1.5rem 1rem;
+  border-radius: 10px;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
-
+.valor-item:hover {
+  box-shadow: 0 6px 18px rgba(44, 62, 80, 0.13);
+  transform: translateY(-3px) scale(1.03);
+}
+.valor-icono {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
 .valor-item h3 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
+  color: #23472a;
+  margin-bottom: 0.7rem;
 }
 
 .equipo {
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
-
 .equipo h2 {
   text-align: center;
   margin-bottom: 2rem;
-  color: #2c3e50;
+  color: #23472a;
 }
-
 .equipo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
-
 .miembro {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.10);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+.miembro-icono {
+  font-size: 2.2rem;
+  margin-right: 0.7rem;
+  margin-top: 0.2rem;
+}
+.miembro-info h3 {
+  color: #23472a;
+  margin-bottom: 0.7rem;
 }
 
-.miembro-info h3 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
+.nosotros-cta {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+.cta-btn {
+  background: #23472a;
+  color: #fff;
+  padding: 0.9rem 2.2rem;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.cta-btn:hover {
+  background: #2e5a36;
+  color: #b6e2c6;
+  transform: scale(1.04);
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .nosotros-container {
-    padding: 1rem;
+@media (max-width: 900px) {
+  .nosotros-container.pro {
+    padding: 1rem 0.2rem;
   }
-
-  .nosotros-header h1 {
-    font-size: 2rem;
-  }
-
   .mision-vision,
   .valores-grid,
   .equipo-grid {
     grid-template-columns: 1fr;
+  }
+  .miembro {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 }
 

@@ -1,9 +1,18 @@
 import React from 'react';
 import '../styles/Nosotros.css';
 
+const iconos = {
+  sostenibilidad: '🌱',
+  innovacion: '💡',
+  transparencia: '🔍',
+  comunidad: '🤝',
+  desarrollo: '🖥️',
+  expertos: '🌾',
+};
+
 const Nosotros = () => {
   return (
-    <div className="nosotros-container">
+    <div className="nosotros-container pro">
       <div className="nosotros-header">
         <h1>Sobre Nosotros</h1>
         <p className="subtitle">Conectando el campo con el futuro</p>
@@ -33,18 +42,22 @@ const Nosotros = () => {
           <h2>Nuestros Valores</h2>
           <div className="valores-grid">
             <div className="valor-item">
+              <div className="valor-icono">{iconos.sostenibilidad}</div>
               <h3>Sostenibilidad</h3>
               <p>Comprometidos con prácticas agrícolas responsables y respetuosas con el medio ambiente.</p>
             </div>
             <div className="valor-item">
+              <div className="valor-icono">{iconos.innovacion}</div>
               <h3>Innovación</h3>
               <p>Buscamos constantemente nuevas soluciones para mejorar el sector agrícola.</p>
             </div>
             <div className="valor-item">
+              <div className="valor-icono">{iconos.transparencia}</div>
               <h3>Transparencia</h3>
               <p>Fomentamos relaciones honestas y transparentes entre todos los participantes.</p>
             </div>
             <div className="valor-item">
+              <div className="valor-icono">{iconos.comunidad}</div>
               <h3>Comunidad</h3>
               <p>Construimos una comunidad fuerte y colaborativa en el sector agrícola.</p>
             </div>
@@ -55,12 +68,14 @@ const Nosotros = () => {
           <h2>Nuestro Equipo</h2>
           <div className="equipo-grid">
             <div className="miembro">
+              <div className="miembro-icono">{iconos.desarrollo}</div>
               <div className="miembro-info">
                 <h3>Equipo de Desarrollo</h3>
                 <p>Profesionales apasionados por la tecnología y la agricultura, trabajando juntos para crear soluciones innovadoras.</p>
               </div>
             </div>
             <div className="miembro">
+              <div className="miembro-icono">{iconos.expertos}</div>
               <div className="miembro-info">
                 <h3>Expertos Agrícolas</h3>
                 <p>Especialistas con amplia experiencia en el sector agrícola, asegurando que nuestras soluciones sean prácticas y efectivas.</p>
@@ -68,6 +83,10 @@ const Nosotros = () => {
             </div>
           </div>
         </section>
+
+        <div className="nosotros-cta">
+          <a href="#contacto" className="cta-btn">Contactar con AgroUY</a>
+        </div>
       </div>
     </div>
   );
