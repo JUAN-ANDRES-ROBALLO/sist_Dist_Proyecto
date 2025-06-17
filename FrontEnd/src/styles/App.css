@@ -1,6 +1,6 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100vw;
+  min-height: 100vh;
   padding: 0;
   text-align: center;
 }
@@ -43,7 +43,7 @@
 
 /* Layout principal */
 .main-container {
-  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Avenir', Arial, sans-serif;
@@ -55,6 +55,7 @@ body, html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: #f5f5e6;
 }
 
 /* Header */
@@ -249,7 +250,7 @@ body, html {
 
 /* Footer */
 .footer {
-  width: 100%;
+  width: 100vw;
   background: #23472a;
   color: #fff;
   display: flex;
@@ -257,11 +258,11 @@ body, html {
   align-items: flex-start;
   padding: 1.5rem 2rem 1.5rem 2rem;
   position: relative;
-  bottom: 0;
   left: 0;
   box-sizing: border-box;
   font-size: 1rem;
   flex-wrap: wrap;
+  bottom: 0;
 }
 .footer-left {
   flex: 1;
@@ -285,6 +286,18 @@ body, html {
   flex-direction: column;
   align-items: flex-end;
   justify-content: flex-end;
+}
+.footer-right a, .footer-right span {
+  text-decoration: none !important;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 0;
+}
+.footer-right > div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 .footer-copy {
   margin-top: 10px;
@@ -363,6 +376,7 @@ body, html {
 }
 
 .content {
-  min-height: calc(100vh - 200px); /* Ajusta según la altura de tu header y footer */
+  flex: 1 0 auto;
+  min-height: 0;
   background-color: #f8f9fa;
 }

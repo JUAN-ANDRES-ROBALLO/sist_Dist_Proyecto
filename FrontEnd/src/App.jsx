@@ -81,7 +81,7 @@ function App() {
         {renderPage()}
       </main>
       {showLogin && <LoginModal setShowLogin={setShowLogin} />}
-      <Footer />
+      <Footer setCurrentPage={setCurrentPage} />
     </div>
   )
 }
