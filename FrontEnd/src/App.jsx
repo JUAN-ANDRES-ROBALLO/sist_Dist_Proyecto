@@ -75,14 +75,16 @@ function App() {
   }
 
   return (
-    <div className="main-container">
-      <Header setShowLogin={setShowLogin} setCurrentPage={setCurrentPage} currentPage={currentPage} />
-      <main className="content">
-        {renderPage()}
-      </main>
-      {showLogin && <LoginModal setShowLogin={setShowLogin} />}
+    <>
+      <div className="main-container">
+        <Header setShowLogin={setShowLogin} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+        <main className="content">
+          {renderPage()}
+        </main>
+        {showLogin && <LoginModal setShowLogin={setShowLogin} />}
+      </div>
       <Footer />
-    </div>
+    </>
   )
 }
 
