@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import LoginModal from './components/LoginModal'
+import RegisterModal from './components/RegisterModal'
 import Nosotros from './components/Nosotros'
 import CultivosServicios from './components/CultivosServicios'
 import './styles/App.css'
@@ -24,6 +25,7 @@ const Home = () => {
 
 function App() {
   const [showLogin, setShowLogin] = useState(false)
+  const [showRegister, setShowRegister] = useState(false)
   const [currentPage, setCurrentPage] = useState('home')
 
   useEffect(() => {
@@ -81,7 +83,8 @@ function App() {
       <main className="content">
         {renderPage()}
       </main>
-      {showLogin && <LoginModal setShowLogin={setShowLogin} />}
+      {showLogin && <LoginModal setShowLogin={setShowLogin} setShowRegister={setShowRegister} />}
+      {showRegister && <RegisterModal setShowRegister={setShowRegister} setShowLogin={setShowLogin} />}
       <Footer setCurrentPage={setCurrentPage} />
     </div>
   )
