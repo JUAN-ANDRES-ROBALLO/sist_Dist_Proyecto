@@ -1,36 +1,36 @@
-.cultivos-container {
+.maquinaria-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-.cultivos-filtros {
+.maquinaria-filtros {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
   align-items: center;
 }
-.cultivos-filtros input {
+.maquinaria-filtros input {
   padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
   flex: 1;
 }
-.cultivos-filtros select {
+.maquinaria-filtros select {
   padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
 }
 
-.cultivos-grid {
+.maquinaria-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
-.cultivo-card {
+.maquinaria-card {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(44, 62, 80, 0.13);
@@ -43,11 +43,11 @@
   position: relative;
   overflow: hidden;
 }
-.cultivo-card:hover {
+.maquinaria-card:hover {
   box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
   transform: translateY(-6px) scale(1.03);
 }
-.cultivo-img {
+.maquinaria-img {
   width: 100%;
   height: 140px;
   object-fit: cover;
@@ -57,30 +57,30 @@
   box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
   transition: transform 0.3s;
 }
-.cultivo-card:hover .cultivo-img {
+.maquinaria-card:hover .maquinaria-img {
   transform: scale(1.07);
 }
-.cultivo-card h3 {
+.maquinaria-card h3 {
   margin: 0 0 0.5rem 0;
   color: #23472a;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
-.cultivo-categoria {
+.maquinaria-categoria {
   font-size: 1rem;
   color: #388e3c;
   margin-bottom: 0.5rem;
   font-weight: bold;
   letter-spacing: 0.2px;
 }
-.cultivo-card p {
+.maquinaria-card p {
   margin: 0 0 0.5rem 0;
   color: #444;
   font-size: 1.05rem;
   font-weight: 400;
 }
-.cultivo-btn {
+.maquinaria-btn {
   margin-top: auto;
   align-self: stretch;
   background: linear-gradient(90deg, #4CAF50 60%, #388e3c 100%);
@@ -95,22 +95,12 @@
   transition: background 0.2s, transform 0.2s;
   letter-spacing: 0.5px;
 }
-.cultivo-btn:hover {
+.maquinaria-btn:hover {
   background: linear-gradient(90deg, #388e3c 60%, #4CAF50 100%);
   transform: translateY(-2px) scale(1.04);
 }
 
-@media (max-width: 700px) {
-  .cultivos-filtros {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .cultivos-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cultivo-modal-backdrop {
+.maquinaria-modal-backdrop {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(30, 40, 50, 0.55);
@@ -124,7 +114,7 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.cultivo-modal {
+.maquinaria-modal {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
@@ -139,7 +129,7 @@
   from { transform: scale(0.92); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-.cultivo-modal-img {
+.maquinaria-modal-img {
   width: 100%;
   max-height: 220px;
   object-fit: cover;
@@ -147,24 +137,33 @@
   margin-bottom: 1.2rem;
   box-shadow: 0 2px 12px rgba(44, 62, 80, 0.13);
 }
-.cultivo-modal h2 {
+.maquinaria-modal h2 {
   margin: 0 0 0.5rem 0;
   color: #23472a;
   font-size: 1.5rem;
   font-weight: 700;
 }
-.cultivo-modal .cultivo-categoria {
+.maquinaria-modal .maquinaria-categoria {
   color: #388e3c;
   font-size: 1.08rem;
   margin-bottom: 0.7rem;
   font-weight: bold;
 }
-.cultivo-modal p {
+.maquinaria-modal p {
   color: #444;
   font-size: 1.08rem;
   margin-bottom: 1.2rem;
 }
-.cultivo-modal .cultivo-btn {
+.maquinaria-modal .maquinaria-btn {
   margin-top: 0.5rem;
   width: 100%;
+}
+@media (max-width: 700px) {
+  .maquinaria-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .maquinaria-grid {
+    grid-template-columns: 1fr;
+  }
 } 

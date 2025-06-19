@@ -10,13 +10,17 @@ services:
       - usuarios
       - frontend
   frontend:
-    image: node:18-alpine
-    working_dir: /app
+    build: ./FrontEnd
     volumes:
-      - ./FrontEnd:/app
+      - ./FrontEnd/src:/app/src
+      - ./FrontEnd/public:/app/public
+      - ./FrontEnd/index.html:/app/index.html
+      - ./FrontEnd/vite.config.js:/app/vite.config.js
     ports:
       - "5173:5173"
-    command: ["sh", "-c", "npm install && npm run dev -- --host"]
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    command: ["npm", "run", "dev", "--", "--host"]
   postgres:
     image: postgres:15
     environment:
