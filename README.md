@@ -1,8 +1,8 @@
-# Sistema Gestión Agrícola - Proyecto SOA
+# Proyecto SOA de Gestión Agrícola
 
-## Levantar el sistema
+Este sistema distribuye 4 apps Django usando RabbitMQ, PostgreSQL, y NGINX como proxy.
 
-1️⃣ Clonar o reconstruir las carpetas:
+## Estructura
 
 - usuarios/
 - terrenos/
@@ -10,10 +10,16 @@
 - notificaciones/
 - nginx/
 - docker-compose.yml
-- .env
 
-2️⃣ Ejecutar:
+## Levantar el sistema
 
-```bash
+```
 docker compose up --build
+```
 
+## Acceso
+
+- Usuarios: http://localhost/usuarios/
+- Terrenos: http://localhost/terrenos/
+- Maquinaria: http://localhost/maquinaria/
+- Notificaciones: http://localhost/notificaciones/

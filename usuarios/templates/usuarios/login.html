@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <form id="loginForm">
+    Email: <input name="email"><br>
+    Contraseña: <input type="password" name="contraseña"><br>
+    <button type="submit">Entrar</button>
+  </form>
+  <script>
+    document.getElementById('loginForm').onssubmit = async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetch('', {method: 'POST', body: JSON.stringify(data)});
+      const r = await res.json();
+      if (r.success) location.href = '/usuarios/homepage/';
+      else alert(r.error);
+    };
+  </script>
+</body>
+</html>
+

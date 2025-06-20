@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Agregar Finca</h2>
+  <form id="fincaForm">
+    ID Productor: <input name="id_productor"><br>
+    Nombre Finca: <input name="nombre_finca"><br>
+    Ubicación: <input name="ubicación"><br>
+    Tipo de Suelo: <input name="tipo_de_suelo"><br>
+    Fecha Registro: <input type="date" name="fecha_registro_finca"><br>
+    <button type="submit">Agregar</button>
+  </form>
+  <script>
+    document.getElementById('fincaForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetch('/api/terrenos/finca/agregar/', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      const r = await res.json();
+      alert(r.success || r.error);
+    };
+  </script>
+</body>
+</html>
+

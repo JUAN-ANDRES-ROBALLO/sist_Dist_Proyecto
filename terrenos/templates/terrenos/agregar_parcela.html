@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Agregar Parcela</h2>
+  <form id="parcelaForm">
+    Finca Nombre: <input name="finca_nombre_p"><br>
+    ID Parcela: <input name="id_parcela"><br>
+    Superficie: <input type="number" step="any" name="superficie"><br>
+    <button type="submit">Agregar</button>
+  </form>
+  <script>
+    document.getElementById('parcelaForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetch('/api/terrenos/parcela/agregar/', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      const r = await res.json();
+      alert(r.success || r.error);
+    };
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Agregar Maquinaria</title></head>
+<body>
+  <h2>Formulario Agregar Maquinaria</h2>
+  <form id="form">
+    Tipo: <input name="tipo"><br>
+    Marca: <input name="marca"><br>
+    Modelo: <input name="modelo"><br>
+    Año: <input name="anio" type="number"><br>
+    <button type="submit">Agregar</button>
+  </form>
+  <a href="/maquinaria/">Volver</a>
+  <script>
+    document.getElementById("form").onsubmit = async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetch("/api/maquinaria/agregar/", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      const r = await res.json();
+      alert(r.success || r.error);
+    }
+  </script>
+</body>
+</html>
+

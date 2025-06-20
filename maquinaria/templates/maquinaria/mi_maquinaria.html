@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head><title>Mi Maquinaria</title></head>
+<body>
+  <h2>Maquinaria Registrada</h2>
+  <div id="listado"></div>
+  <a href="/maquinaria/">Volver</a>
+  <br><br>
+  <a href="/maquinaria/form/agregar/">Agregar Nueva Maquinaria</a>
+
+  <script>
+    async function cargar() {
+      const res = await fetch("/api/maquinaria/listar/");
+      const data = await res.json();
+      const div = document.getElementById("listado");
+      div.innerHTML = "";
+
+      for (const m of data.maquinaria) {
+        const p = document.createElement("p");
+        p.innerHTML = `
+          ID: ${m.id_maquinaria} - ${m.tipo} - ${m.marca} ${m.modelo} (${m.anio})
+        `;
+
+        const eliminar = document.createElement("button");
+        eliminar.textContent = "Eliminar";
+        eliminar.onclick = async () => {
+          await fetch("/api/maquinaria/eliminar/", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: m.id_maquinaria })
+          }).then(r => r.json()).then(alert);
+          cargar();
+        };
+
+        const venta = document.createElement("button");
+        venta.textContent = "Poner en venta";
+        venta.onclick = async () => {
+          const precio = prompt("Precio:");
+          if (!precio) return;
+          await fetch("/api/maquinaria/venta/agregar/", {
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: m.id_maquinaria, precio })
+          }).then(r => r.json()).then(alert);
+        };
+
+        const quitarVenta = document.createElement("button");
+        quitarVenta.textContent = "Quitar de venta";
+        quitarVenta.onclick = async () => {
+          await fetch("/api/maquinaria/venta/quitar/", {
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: m.id_maquinaria })
+          }).then(r => r.json()).then(alert);
+        };
+
+        const servicio = document.createElement("button");
+        servicio.textContent = "Poner en servicio";
+        servicio.onclick = async () => {
+          await fetch("/api/maquinaria/servicio/agregar/", {
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: m.id_maquinaria })
+          }).then(r => r.json()).then(alert);
+        };
+
+        const quitarServicio = document.createElement("button");
+        quitarServicio.textContent = "Quitar de servicio";
+        quitarServicio.onclick = async () => {
+          await fetch("/api/maquinaria/servicio/quitar/", {
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: m.id_maquinaria })
+          }).then(r => r.json()).then(alert);
+        };
+
+        div.appendChild(p);
+        div.appendChild(eliminar);
+        div.appendChild(venta);
+        div.appendChild(quitarVenta);
+        div.appendChild(servicio);
+        div.appendChild(quitarServicio);
+        div.appendChild(document.createElement("hr"));
+      }
+    }
+
+    cargar();
+  </script>
+</body>
+</html>
+
