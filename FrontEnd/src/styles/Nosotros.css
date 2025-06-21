@@ -51,6 +51,10 @@
   margin-bottom: 1rem;
 }
 
+.card p {
+  color: #000000;
+}
+
 .valores {
   margin-bottom: 3rem;
 }
@@ -88,6 +92,10 @@
   margin-bottom: 0.7rem;
 }
 
+.valor-item p {
+  color: #000000;
+}
+
 .equipo {
   margin-bottom: 3rem;
 }
@@ -118,6 +126,10 @@
 .miembro-info h3 {
   color: #23472a;
   margin-bottom: 0.7rem;
+}
+
+.miembro-info p {
+  color: #000000;
 }
 
 .nosotros-cta {

@@ -6,6 +6,7 @@ import RegisterModal from './components/RegisterModal'
 import Nosotros from './components/Nosotros'
 import CultivosServicios from './components/CultivosServicios'
 import MaquinariaServicios from './components/MaquinariaServicios'
+import ProcesosServicios from './components/ProcesosServicios'
 import './styles/App.css'
 
 // Componente para la página de inicio
@@ -68,7 +69,7 @@ function App() {
       case 'maquinaria':
         return <MaquinariaServicios />;
       case 'procesos':
-        return <div>Procesos</div>;
+        return <ProcesosServicios />;
       case 'optimizacion':
         return <div>Optimización</div>;
       case 'reportes':

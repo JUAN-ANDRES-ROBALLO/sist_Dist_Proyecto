@@ -23,17 +23,19 @@ const Nosotros = () => {
           <div className="card">
             <h2>Nuestra Misión</h2>
             <p>
-              Facilitar la conexión entre agricultores y compradores, promoviendo
-              prácticas agrícolas sostenibles y asegurando un futuro más próspero
-              para el sector agrícola.
+              Transformar la agricultura a través de soluciones tecnológicas que empoderen a los agricultores, 
+              optimicen sus procesos y promuevan la sostenibilidad. Buscamos ser el puente que conecta 
+              la tradición del campo con la innovación del futuro, asegurando la prosperidad 
+              de las comunidades agrícolas y la salud de nuestro planeta.
             </p>
           </div>
           <div className="card">
             <h2>Nuestra Visión</h2>
             <p>
-              Ser la plataforma líder en la transformación digital del sector
-              agrícola, creando un ecosistema sostenible y eficiente que beneficie
-              a todos los actores de la cadena de valor.
+              Aspiramos a un futuro donde cada agricultor tenga acceso a herramientas inteligentes 
+              que le permitan tomar decisiones informadas, maximizar su rendimiento y contribuir a una 
+              cadena de suministro alimentaria más transparente y eficiente. Queremos ser líderes en la 
+              revolución agrotecnológica, creando un ecosistema global conectado y sostenible.
             </p>
           </div>
         </section>
@@ -71,14 +73,14 @@ const Nosotros = () => {
               <div className="miembro-icono">{iconos.desarrollo}</div>
               <div className="miembro-info">
                 <h3>Equipo de Desarrollo</h3>
-                <p>Profesionales apasionados por la tecnología y la agricultura, trabajando juntos para crear soluciones innovadoras.</p>
+                <p>Nuestro motor de innovación. Un equipo multidisciplinario de ingenieros de software, científicos de datos y diseñadores UX/UI apasionados por la agrotecnología. Se especializan en aplicar las últimas tendencias, como Inteligencia Artificial y Big Data, para construir una plataforma robusta, predictiva y, lo más importante, intuitiva para el agricultor moderno.</p>
               </div>
             </div>
             <div className="miembro">
               <div className="miembro-icono">{iconos.expertos}</div>
               <div className="miembro-info">
                 <h3>Expertos Agrícolas</h3>
-                <p>Especialistas con amplia experiencia en el sector agrícola, asegurando que nuestras soluciones sean prácticas y efectivas.</p>
+                <p>La raíz de nuestro conocimiento. Un equipo de ingenieros agrónomos y especialistas con décadas de experiencia directa en el campo. Son el puente fundamental entre la tecnología y la agricultura, asegurando que cada herramienta que desarrollamos sea práctica, precisa y verdaderamente útil. Su pericia garantiza que nuestras soluciones están basadas en ciencia y probadas en la práctica.</p>
               </div>
             </div>
           </div>

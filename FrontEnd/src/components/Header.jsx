@@ -1,8 +1,50 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
+  const [isSearchVisible, setSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (isSearchVisible) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchVisible]);
+
   const handleNavigation = (page) => {
     setCurrentPage(page);
+  };
+
+  const executeSearch = () => {
+    const query = searchQuery.toLowerCase().trim();
+    const pageMap = {
+      cultivos: 'cultivos',
+      maquinaria: 'maquinaria',
+      maquinarias: 'maquinaria',
+      procesos: 'procesos',
+    };
+
+    if (pageMap[query]) {
+      handleNavigation(pageMap[query]);
+      setSearchQuery('');
+      setSearchVisible(false);
+    } else if (query) {
+      alert(`No se encontró una página para "${searchQuery}"`);
+    }
+  };
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      executeSearch();
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (isSearchVisible) {
+      executeSearch();
+    } else {
+      setSearchVisible(true);
+    }
   };
 
   return (
@@ -48,7 +90,25 @@ export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
         </div>
       </nav>
       <div className="header-actions">
-        <button className="search-btn" aria-label="Buscar">🔍</button>
+        <div className={`search-container ${isSearchVisible ? 'active' : ''}`}>
+          <input
+            ref={searchInputRef}
+            type="text"
+            className="search-input"
+            placeholder="Buscar..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleSearchKeyPress}
+            onBlur={() => {
+              if (!searchQuery) {
+                setSearchVisible(false);
+              }
+            }}
+          />
+          <button className="search-btn" aria-label="Buscar" onClick={handleSearchClick}>
+            🔍
+          </button>
+        </div>
         <button className="login-btn" onClick={() => setShowLogin(true)}>Iniciar sesión</button>
       </div>
     </header>

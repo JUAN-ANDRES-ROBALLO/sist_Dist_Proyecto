@@ -124,13 +124,42 @@ body, html {
   gap: 1rem;
   align-items: center;
 }
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 0;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 20px;
+  transition: width 0.4s ease-in-out;
+  visibility: hidden;
+}
+
+.search-container.active .search-input {
+  width: 200px; /* O el ancho que prefieras */
+  visibility: visible;
+  padding-left: 1rem;
+}
+
 .search-btn {
   background: none;
   border: none;
   color: #fff;
   font-size: 1.3rem;
   cursor: pointer;
+  position: absolute;
+  right: 5px;
 }
+
+.search-container.active .search-btn {
+  color: #333; /* Cambia el color del ícono cuando la barra está activa */
+}
+
 .header .login-btn {
   background: #fff;
   border: 2px solid #23472a;
