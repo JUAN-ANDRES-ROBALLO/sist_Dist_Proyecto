@@ -235,6 +235,7 @@ body, html {
 }
 .modal {
   background: #fff;
+  color: #000;
   padding: 2rem 2.5rem;
   border-radius: 10px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.2);
@@ -450,34 +451,34 @@ body, html {
 
 /* Estilos para navegación */
 .nav span {
-  text-decoration: none;
-  color: #333;
   padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
-  display: inline-block;
+  color: #fff;
+  position: relative;
+  transition: color 0.3s;
+  cursor: pointer;
 }
 
 .nav span:hover {
-  color: #4CAF50;
+  color: #a7c957;
 }
 
 .nav span.active {
-  color: #fff;
   font-weight: bold;
+  color: #fff;
   border-bottom: 2px solid #fff;
 }
 
 .dropdown-content span {
+  color: #fff;
+  padding: 0.7rem 1rem;
   display: block;
-  padding: 0.5rem 1rem;
   text-decoration: none;
-  color: #333;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .dropdown-content span:hover {
-  background-color: #f5f5f5;
-  color: #4CAF50;
+  background: #3b7a4b;
 }
 
 .content {

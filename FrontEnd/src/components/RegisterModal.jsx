@@ -6,6 +6,9 @@ export default function RegisterModal({ setShowRegister, setShowLogin }) {
       <div className="modal" onClick={e => e.stopPropagation()}>
         <h2>Registrarse</h2>
         <form className="login-form" onSubmit={e => { e.preventDefault(); setShowRegister(false); }}>
+          <input type="text" placeholder="Nombre" required />
+          <input type="text" placeholder="Apellido" required />
+          <input type="date" placeholder="Fecha de Nacimiento" required />
           <input type="text" placeholder="Usuario" required />
           <input type="email" placeholder="Email" required />
           <input type="password" placeholder="Contraseña" required />

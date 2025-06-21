@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../styles/ProcesosServicios.css';
-import GestionarEtapaModal from './GestionarEtapaModal';
 
 const initialEtapas = [
   {
@@ -49,28 +48,12 @@ const initialEtapas = [
 
 const ProcesosServicios = () => {
   const [etapas, setEtapas] = useState(initialEtapas);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEtapa, setSelectedEtapa] = useState(null);
-
-  const handleOpenModal = (etapa) => {
-    setSelectedEtapa(etapa);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedEtapa(null);
-  };
-
-  const handleSaveEtapa = (etapaId) => {
-    setEtapas(etapas.map(e => e.id === etapaId ? { ...e, completada: true } : e));
-  };
 
   return (
     <div className="procesos-container">
       <div className="procesos-header">
         <h1>Ciclo de Cultivo Interactivo</h1>
-        <p>Gestiona y visualiza cada etapa de tu producción agrícola de forma sencilla e integrada.</p>
+        <p>Visualiza cada etapa de tu producción agrícola de forma sencilla e integrada.</p>
       </div>
       <div className="timeline">
         {etapas.map((etapa) => (
@@ -80,9 +63,6 @@ const ProcesosServicios = () => {
               <img src={etapa.icono} alt={etapa.nombre} className="etapa-icono" />
               <h2>{etapa.nombre}</h2>
               <p>{etapa.descripcion}</p>
-              <button onClick={() => handleOpenModal(etapa)} className="btn-gestionar">
-                {etapa.completada ? 'Ver/Editar Gestión' : 'Gestionar Etapa'}
-              </button>
             </div>
           </div>
         ))}
@@ -90,16 +70,9 @@ const ProcesosServicios = () => {
       <div className="procesos-footer">
         <h2>La Evolución de la Gestión Agrícola</h2>
         <p>
-          Este ciclo interactivo es más que una simple guía; es el núcleo de tu centro de operaciones digital. La idea es transformar la gestión agrícola, pasando de las anotaciones en papel a una plataforma inteligente. Al hacer clic en "Gestionar Etapa", en futuras versiones podrás registrar datos, asignar tareas, recibir recomendaciones basadas en datos y generar reportes de trazabilidad. Es el primer paso hacia una agricultura de precisión, más eficiente y rentable.
+          Este ciclo interactivo es una guía visual del proceso agrícola. En futuras versiones, se podrán añadir funcionalidades de gestión para una agricultura de precisión, más eficiente y rentable.
         </p>
       </div>
-      {isModalOpen && (
-        <GestionarEtapaModal
-          etapa={selectedEtapa}
-          onClose={handleCloseModal}
-          onSave={handleSaveEtapa}
-        />
-      )}
     </div>
   );
 };

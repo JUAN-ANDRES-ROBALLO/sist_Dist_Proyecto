@@ -81,16 +81,9 @@ export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
         >
           Nosotros
         </span>
-        <div className="dropdown">
-          <button className="dropbtn">Gestión</button>
-          <div className="dropdown-content">
-            <span onClick={() => handleNavigation('optimizacion')} style={{ cursor: 'pointer' }}>Optimización</span>
-            <span onClick={() => handleNavigation('reportes')} style={{ cursor: 'pointer' }}>Reportes</span>
-          </div>
-        </div>
       </nav>
       <div className="header-actions">
-        <div className={`search-container ${isSearchVisible ? 'active' : ''}`}>
+        <div className={`search-container ${isSearchVisible ? 'visible' : ''}`}>
           <input
             ref={searchInputRef}
             type="text"

@@ -47,12 +47,6 @@ function App() {
       case 'procesos':
         document.title = 'Procesos';
         break;
-      case 'optimizacion':
-        document.title = 'Optimización';
-        break;
-      case 'reportes':
-        document.title = 'Reportes';
-        break;
       default:
         document.title = 'AGROUY'; // Título por defecto si la página no se reconoce
     }
@@ -70,10 +64,6 @@ function App() {
         return <MaquinariaServicios />;
       case 'procesos':
         return <ProcesosServicios />;
-      case 'optimizacion':
-        return <div>Optimización</div>;
-      case 'reportes':
-        return <div>Reportes</div>;
       default:
         return <Home />;
     }
