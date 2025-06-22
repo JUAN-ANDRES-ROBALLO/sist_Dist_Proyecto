@@ -3,10 +3,11 @@ import { usuariosService } from '../services/api'
 
 export default function RegisterModal({ setShowRegister, setShowLogin }) {
   const [formData, setFormData] = useState({
-    username: '',
+    cedula: '',
+    nombre: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    password_confirm: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -17,18 +18,21 @@ export default function RegisterModal({ setShowRegister, setShowLogin }) {
     setError('')
 
     // Validar que las contraseñas coincidan
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.password_confirm) {
       setError('Las contraseñas no coinciden')
       setLoading(false)
       return
     }
 
+    // Validar cédula (solo números, 8-10 dígitos)
+    if (!/^\d{8,10}$/.test(formData.cedula)) {
+      setError('La cédula debe tener entre 8 y 10 dígitos numéricos')
+      setLoading(false)
+      return
+    }
+
     try {
-      const response = await usuariosService.register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password
-      })
+      const response = await usuariosService.register(formData)
       console.log('Registration successful:', response)
       
       setShowRegister(false)
@@ -36,7 +40,7 @@ export default function RegisterModal({ setShowRegister, setShowLogin }) {
       // Aquí puedes mostrar un mensaje de éxito
     } catch (error) {
       console.error('Registration failed:', error)
-      setError('Error al registrarse. Verifica los datos ingresados.')
+      setError(error.message || 'Error al registrarse. Verifica los datos ingresados.')
     } finally {
       setLoading(false)
     }
@@ -56,9 +60,19 @@ export default function RegisterModal({ setShowRegister, setShowLogin }) {
         <form className="register-form" onSubmit={handleSubmit}>
           <input 
             type="text" 
-            name="username"
-            placeholder="Nombre de usuario" 
-            value={formData.username}
+            name="cedula"
+            placeholder="Cédula (8-10 dígitos)" 
+            value={formData.cedula}
+            onChange={handleChange}
+            maxLength="10"
+            pattern="[0-9]{8,10}"
+            required 
+          />
+          <input 
+            type="text" 
+            name="nombre"
+            placeholder="Nombre completo" 
+            value={formData.nombre}
             onChange={handleChange}
             required 
           />
@@ -76,14 +90,16 @@ export default function RegisterModal({ setShowRegister, setShowLogin }) {
             placeholder="Contraseña" 
             value={formData.password}
             onChange={handleChange}
+            minLength="6"
             required 
           />
           <input 
             type="password" 
-            name="confirmPassword"
+            name="password_confirm"
             placeholder="Confirmar contraseña" 
-            value={formData.confirmPassword}
+            value={formData.password_confirm}
             onChange={handleChange}
+            minLength="6"
             required 
           />
           {error && <p className="error-message">{error}</p>}

@@ -20,7 +20,8 @@ const apiRequest = async (endpoint, options = {}) => {
     const response = await fetch(url, config);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
     }
     
     return await response.json();
@@ -32,102 +33,115 @@ const apiRequest = async (endpoint, options = {}) => {
 
 // Servicios para Usuarios
 export const usuariosService = {
-  // Login
+  // Login - el backend espera email y password
   login: (credentials) => apiRequest('/api/usuarios/login/', {
     method: 'POST',
-    body: JSON.stringify(credentials),
+    body: JSON.stringify({
+      email: credentials.email,
+      password: credentials.password
+    }),
   }),
   
-  // Registro
-  register: (userData) => apiRequest('/api/usuarios/register/', {
+  // Registro - el backend espera cedula, nombre, email, password, password_confirm
+  register: (userData) => apiRequest('/api/usuarios/signup/', {
     method: 'POST',
-    body: JSON.stringify(userData),
+    body: JSON.stringify({
+      cedula: userData.cedula,
+      nombre: userData.nombre,
+      email: userData.email,
+      password: userData.password,
+      password_confirm: userData.password_confirm
+    }),
   }),
   
-  // Obtener perfil del usuario
-  getProfile: () => apiRequest('/api/usuarios/profile/'),
+  // Obtener lista de usuarios
+  getAll: () => apiRequest('/api/usuarios/'),
   
-  // Actualizar perfil
-  updateProfile: (userData) => apiRequest('/api/usuarios/profile/', {
-    method: 'PUT',
-    body: JSON.stringify(userData),
-  }),
+  // Obtener usuario por cédula
+  getByCedula: (cedula) => apiRequest(`/api/usuarios/${cedula}/`),
+  
+  // Health check
+  health: () => apiRequest('/api/usuarios/health/'),
 };
 
 // Servicios para Terrenos
 export const terrenosService = {
-  // Obtener todos los terrenos
-  getAll: () => apiRequest('/api/terrenos/'),
+  // Health check
+  health: () => apiRequest('/api/terrenos/health/'),
   
-  // Obtener terreno por ID
-  getById: (id) => apiRequest(`/api/terrenos/${id}/`),
-  
-  // Crear nuevo terreno
-  create: (terrenoData) => apiRequest('/api/terrenos/', {
+  // Fincas
+  getFincas: () => apiRequest('/api/terrenos/fincas/'),
+  createFinca: (fincaData) => apiRequest('/api/terrenos/fincas/agregar/', {
     method: 'POST',
-    body: JSON.stringify(terrenoData),
+    body: JSON.stringify(fincaData),
+  }),
+  deleteFinca: (fincaData) => apiRequest('/api/terrenos/fincas/eliminar/', {
+    method: 'POST',
+    body: JSON.stringify(fincaData),
   }),
   
-  // Actualizar terreno
-  update: (id, terrenoData) => apiRequest(`/api/terrenos/${id}/`, {
-    method: 'PUT',
-    body: JSON.stringify(terrenoData),
+  // Parcelas
+  getParcelas: () => apiRequest('/api/terrenos/parcelas/'),
+  createParcela: (parcelaData) => apiRequest('/api/terrenos/parcelas/agregar/', {
+    method: 'POST',
+    body: JSON.stringify(parcelaData),
+  }),
+  deleteParcela: (parcelaData) => apiRequest('/api/terrenos/parcelas/eliminar/', {
+    method: 'POST',
+    body: JSON.stringify(parcelaData),
   }),
   
-  // Eliminar terreno
-  delete: (id) => apiRequest(`/api/terrenos/${id}/`, {
-    method: 'DELETE',
+  // Cultivos
+  getCultivos: () => apiRequest('/api/terrenos/cultivos/'),
+  createCultivo: (cultivoData) => apiRequest('/api/terrenos/cultivos/agregar/', {
+    method: 'POST',
+    body: JSON.stringify(cultivoData),
   }),
 };
 
 // Servicios para Maquinaria
 export const maquinariaService = {
-  // Obtener toda la maquinaria
-  getAll: () => apiRequest('/api/maquinaria/'),
+  // Health check
+  health: () => apiRequest('/api/maquinaria/health/'),
   
-  // Obtener maquinaria por ID
-  getById: (id) => apiRequest(`/api/maquinaria/${id}/`),
-  
-  // Crear nueva maquinaria
-  create: (maquinariaData) => apiRequest('/api/maquinaria/', {
+  // Maquinaria
+  getAll: () => apiRequest('/api/maquinaria/maquinaria/'),
+  create: (maquinariaData) => apiRequest('/api/maquinaria/maquinaria/crear/', {
     method: 'POST',
     body: JSON.stringify(maquinariaData),
   }),
-  
-  // Actualizar maquinaria
-  update: (id, maquinariaData) => apiRequest(`/api/maquinaria/${id}/`, {
-    method: 'PUT',
-    body: JSON.stringify(maquinariaData),
+  delete: (id) => apiRequest(`/api/maquinaria/maquinaria/${id}/eliminar/`, {
+    method: 'POST',
   }),
   
-  // Eliminar maquinaria
-  delete: (id) => apiRequest(`/api/maquinaria/${id}/`, {
-    method: 'DELETE',
+  // Ventas
+  getVentas: () => apiRequest('/api/maquinaria/ventas/'),
+  createVenta: (ventaData) => apiRequest('/api/maquinaria/ventas/crear/', {
+    method: 'POST',
+    body: JSON.stringify(ventaData),
+  }),
+  
+  // Reservas
+  getReservas: () => apiRequest('/api/maquinaria/reservas/'),
+  createReserva: (reservaData) => apiRequest('/api/maquinaria/reservas/crear/', {
+    method: 'POST',
+    body: JSON.stringify(reservaData),
   }),
 };
 
 // Servicios para Notificaciones
 export const notificacionesService = {
-  // Obtener todas las notificaciones
-  getAll: () => apiRequest('/api/notificaciones/'),
+  // Health check
+  health: () => apiRequest('/api/notificaciones/health/'),
   
-  // Obtener notificación por ID
-  getById: (id) => apiRequest(`/api/notificaciones/${id}/`),
-  
-  // Crear nueva notificación
-  create: (notificacionData) => apiRequest('/api/notificaciones/', {
+  // Notificaciones
+  getAll: () => apiRequest('/api/notificaciones/notificaciones/'),
+  create: (notificacionData) => apiRequest('/api/notificaciones/notificaciones/crear/', {
     method: 'POST',
     body: JSON.stringify(notificacionData),
   }),
-  
-  // Marcar como leída
-  markAsRead: (id) => apiRequest(`/api/notificaciones/${id}/mark-read/`, {
+  delete: (id) => apiRequest(`/api/notificaciones/notificaciones/${id}/eliminar/`, {
     method: 'POST',
-  }),
-  
-  // Eliminar notificación
-  delete: (id) => apiRequest(`/api/notificaciones/${id}/`, {
-    method: 'DELETE',
   }),
 };
 

@@ -7,6 +7,7 @@ import Nosotros from './components/Nosotros'
 import CultivosServicios from './components/CultivosServicios'
 import MaquinariaServicios from './components/MaquinariaServicios'
 import ProcesosServicios from './components/ProcesosServicios'
+import TestConnection from './components/TestConnection'
 import './styles/App.css'
 
 // Componente para la página de inicio
@@ -47,6 +48,9 @@ function App() {
       case 'procesos':
         document.title = 'Procesos';
         break;
+      case 'test':
+        document.title = 'Test de Conexión';
+        break;
       default:
         document.title = 'AGROUY'; // Título por defecto si la página no se reconoce
     }
@@ -64,6 +68,8 @@ function App() {
         return <MaquinariaServicios />;
       case 'procesos':
         return <ProcesosServicios />;
+      case 'test':
+        return <TestConnection />;
       default:
         return <Home />;
     }

@@ -3,7 +3,7 @@ import { usuariosService } from '../services/api'
 
 export default function LoginModal({ setShowLogin, setShowRegister }) {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   })
   const [loading, setLoading] = useState(false)
@@ -25,7 +25,7 @@ export default function LoginModal({ setShowLogin, setShowRegister }) {
       // Aquí puedes agregar lógica adicional después del login exitoso
     } catch (error) {
       console.error('Login failed:', error)
-      setError('Error al iniciar sesión. Verifica tus credenciales.')
+      setError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.')
     } finally {
       setLoading(false)
     }
@@ -44,10 +44,10 @@ export default function LoginModal({ setShowLogin, setShowRegister }) {
         <h2>Iniciar sesión</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <input 
-            type="text" 
-            name="username"
-            placeholder="Usuario" 
-            value={formData.username}
+            type="email" 
+            name="email"
+            placeholder="Email" 
+            value={formData.email}
             onChange={handleChange}
             required 
           />

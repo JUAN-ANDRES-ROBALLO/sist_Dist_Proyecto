@@ -102,6 +102,22 @@ export default function Header({ setShowLogin, setCurrentPage, currentPage }) {
             🔍
           </button>
         </div>
+        <button 
+          className="test-btn" 
+          onClick={() => handleNavigation('test')}
+          style={{
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            padding: '8px 12px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            marginRight: '10px',
+            fontSize: '12px'
+          }}
+        >
+          🔍 Test
+        </button>
         <button className="login-btn" onClick={() => setShowLogin(true)}>Iniciar sesión</button>
       </div>
     </header>
