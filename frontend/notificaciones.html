@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Notificaciones - Sistema Agrícola</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .notificaciones-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .success-message {
+            color: #40c057;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .priority-high {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .priority-medium {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        
+        .priority-low {
+            color: #28a745;
+        }
+        
+        .priority-critical {
+            color: #dc3545;
+            font-weight: bold;
+            background: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <div class="notificaciones-container">
+        <div class="section">
+            <h1>Gestión de Notificaciones</h1>
+            <p>Bienvenido, <span id="user-name"></span></p>
+            <button onclick="volverHomepage()" class="btn btn-secondary">Volver al Homepage</button>
+        </div>
+
+        <!-- Agregar Notificación -->
+        <div class="section">
+            <h2>Agregar Nueva Notificación</h2>
+            <p>Para agregar una nueva notificación, haga clic en el botón de abajo:</p>
+            <button onclick="irAgregarNotificacion()" class="btn btn-primary">Ir a Agregar Notificación</button>
+        </div>
+
+        <!-- Lista de Notificaciones -->
+        <div class="section">
+            <h2>Mis Notificaciones</h2>
+            <button onclick="cargarNotificaciones()" class="btn btn-secondary">Actualizar Lista</button>
+            <div id="notificaciones-lista"></div>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="mensajes"></div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Cargar usuario desde URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            if (userParam) {
+                try {
+                    currentUser = JSON.parse(decodeURIComponent(userParam));
+                    document.getElementById('user-name').textContent = currentUser.nombre;
+                    cargarNotificaciones();
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    volverHomepage();
+                }
+            } else {
+                volverHomepage();
+            }
+        });
+
+        function volverHomepage() {
+            window.location.href = '/';
+        }
+
+        function irAgregarNotificacion() {
+            const url = new URL('/agregar-notificacion.html', window.location.origin);
+            url.searchParams.set('user', JSON.stringify(currentUser));
+            window.location.href = url.toString();
+        }
+
+        function mostrarMensaje(mensaje, tipo = 'success') {
+            const mensajesDiv = document.getElementById('mensajes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = tipo === 'success' ? 'success-message' : 'error-message';
+            mensajeDiv.textContent = mensaje;
+            mensajesDiv.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 5000);
+        }
+
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        async function cargarNotificaciones() {
+            try {
+                const response = await apiCall(`/api/notificaciones/?id_productor=${currentUser.cedula}`);
+                
+                const notificacionesLista = document.getElementById('notificaciones-lista');
+                
+                if (response.notificaciones.length === 0) {
+                    notificacionesLista.innerHTML = '<p>No hay notificaciones registradas</p>';
+                    return;
+                }
+
+                let tablaHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Título</th>
+                                <th>Mensaje</th>
+                                <th>Fecha</th>
+                                <th>Prioridad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                response.notificaciones.forEach(notificacion => {
+                    const prioridadClass = getPrioridadClass(notificacion.prioridad);
+                    tablaHTML += `
+                        <tr>
+                            <td>${notificacion.tipo_notificacion}</td>
+                            <td>${notificacion.titulo}</td>
+                            <td>${notificacion.mensaje}</td>
+                            <td>${new Date(notificacion.fecha_notificacion).toLocaleString()}</td>
+                            <td class="${prioridadClass}">${notificacion.prioridad}</td>
+                            <td>
+                                <button onclick="eliminarNotificacion(${notificacion.id})" class="btn btn-danger btn-small">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tablaHTML += '</tbody></table>';
+                notificacionesLista.innerHTML = tablaHTML;
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        function getPrioridadClass(prioridad) {
+            switch (prioridad) {
+                case 'Crítica':
+                    return 'priority-critical';
+                case 'Alta':
+                    return 'priority-high';
+                case 'Media':
+                    return 'priority-medium';
+                case 'Baja':
+                    return 'priority-low';
+                default:
+                    return '';
+            }
+        }
+
+        async function eliminarNotificacion(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta notificación?')) {
+                return;
+            }
+
+            try {
+                await apiCall(`/api/notificaciones/notificaciones/${id}/eliminar/`, {
+                    method: 'DELETE'
+                });
+
+                mostrarMensaje('Notificación eliminada exitosamente');
+                cargarNotificaciones();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html> 

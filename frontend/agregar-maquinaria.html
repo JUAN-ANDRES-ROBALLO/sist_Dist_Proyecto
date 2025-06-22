@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Maquinaria - Sistema Agrícola</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .success-message {
+            color: #40c057;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .help-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="section">
+            <h1>Agregar Maquinaria</h1>
+            <p>Usuario: <span id="user-name"></span></p>
+            <button onclick="volverMaquinaria()" class="btn btn-secondary">Volver a Maquinaria</button>
+        </div>
+
+        <div class="section">
+            <h2>Datos de la Maquinaria</h2>
+            <form id="agregar-maquinaria-form">
+                <div class="form-group">
+                    <label for="tipo-maquinaria">Tipo de Maquinaria:</label>
+                    <select id="tipo-maquinaria" name="tipo_maquinaria" required>
+                        <option value="">Seleccione el tipo</option>
+                        <option value="Tractor">Tractor</option>
+                        <option value="Cosechadora">Cosechadora</option>
+                        <option value="Sembradora">Sembradora</option>
+                        <option value="Pulverizadora">Pulverizadora</option>
+                        <option value="Arado">Arado</option>
+                        <option value="Rastra">Rastra</option>
+                        <option value="Aspersor">Aspersor</option>
+                        <option value="Motoazada">Motoazada</option>
+                        <option value="Bomba de Agua">Bomba de Agua</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca" maxlength="50" required>
+                    <small class="help-text">Texto, máximo 50 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modelo">Modelo:</label>
+                    <input type="text" id="modelo" name="modelo" maxlength="50" required>
+                    <small class="help-text">Texto, máximo 50 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="anio">Año de Fabricación:</label>
+                    <input type="number" id="anio" name="anio" min="1900" max="2030" required>
+                    <small class="help-text">Número, entre 1900 y 2030</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado" name="estado" required>
+                        <option value="">Seleccione el estado</option>
+                        <option value="Excelente">Excelente</option>
+                        <option value="Bueno">Bueno</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Malo">Malo</option>
+                        <option value="En Reparación">En Reparación</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" maxlength="500" placeholder="Descripción detallada de la maquinaria..."></textarea>
+                    <small class="help-text">Texto, máximo 500 caracteres (opcional)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha-adquisicion">Fecha de Adquisición:</label>
+                    <input type="date" id="fecha-adquisicion" name="fecha_adquisicion" required>
+                    <small class="help-text">Fecha (YYYY-MM-DD)</small>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                    <button type="button" onclick="volverMaquinaria()" class="btn btn-secondary">Volver</button>
+                </div>
+            </form>
+            <div id="mensajes"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            if (userParam) {
+                try {
+                    currentUser = JSON.parse(decodeURIComponent(userParam));
+                    document.getElementById('user-name').textContent = currentUser.nombre;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    volverMaquinaria();
+                }
+            } else {
+                volverMaquinaria();
+            }
+        });
+
+        function volverMaquinaria() {
+            const url = new URL('/maquinaria.html', window.location.origin);
+            if (currentUser) {
+                url.searchParams.set('user', JSON.stringify(currentUser));
+            }
+            window.location.href = url.toString();
+        }
+
+        function mostrarMensaje(mensaje, tipo = 'success') {
+            const mensajesDiv = document.getElementById('mensajes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = tipo === 'success' ? 'success-message' : 'error-message';
+            mensajeDiv.textContent = mensaje;
+            mensajesDiv.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 5000);
+        }
+
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        document.getElementById('agregar-maquinaria-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                
+                const data = {
+                    id_productor: currentUser.cedula,
+                    tipo_maquinaria: formData.get('tipo_maquinaria'),
+                    marca: formData.get('marca'),
+                    modelo: formData.get('modelo'),
+                    anio: parseInt(formData.get('anio')),
+                    estado: formData.get('estado'),
+                    descripcion: formData.get('descripcion') || '',
+                    fecha_adquisicion: formData.get('fecha_adquisicion')
+                };
+
+                await apiCall('/api/maquinaria/agregar/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Maquinaria agregada exitosamente');
+                this.reset();
+                
+                // Redirigir después de 2 segundos
+                setTimeout(() => {
+                    volverMaquinaria();
+                }, 2000);
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html> 

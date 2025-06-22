@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function LoginModal({ setShowLogin }) {
+export default function LoginModal({ setShowLogin, setShowRegister }) {
   return (
     <div className="modal-backdrop" onClick={() => setShowLogin(false)}>
       <div className="modal" onClick={e => e.stopPropagation()}>
@@ -9,7 +9,7 @@ export default function LoginModal({ setShowLogin }) {
           <input type="text" placeholder="Usuario" required />
           <input type="password" placeholder="Contraseña" required />
           <button type="submit">Entrar</button>
-          <button type="button" className="register-btn">Registrarse</button>
+          <button type="button" className="register-btn" onClick={() => { setShowLogin(false); setShowRegister(true); }}>Registrarse</button>
         </form>
         <button className="close-modal" onClick={() => setShowLogin(false)}>Cerrar</button>
       </div>

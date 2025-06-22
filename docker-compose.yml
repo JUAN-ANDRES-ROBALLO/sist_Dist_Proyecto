@@ -1,38 +1,269 @@
 version: '3.8'
+
 services:
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - usuarios
+  # Database
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: agrodb
-      POSTGRES_USER: agro
-      POSTGRES_PASSWORD: agro123
+      POSTGRES_DB: farm_management
+      POSTGRES_USER: farm_user
+      POSTGRES_PASSWORD: farm_password
     volumes:
-      - pgdata:/var/lib/postgresql/data
-  rabbitmq:
-    image: rabbitmq:3-management
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - "5432:5432"
+    networks:
+      - farm_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farm_user -d farm_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: farm_user
+      RABBITMQ_DEFAULT_PASS: farm_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - farm_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Usuarios Service
   usuarios:
-    build: ./usuarios
-    env_file:
-      - ./usuarios/.env
+    build:
+      context: ./usuarios
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/usuarios_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,usuarios
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - ./usuarios:/app
+    networks:
+      - farm_network
+    ports:
+      - "8001:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Usuarios Celery Worker
+  usuarios-worker:
+    build:
+      context: ./usuarios
+      dockerfile: Dockerfile
+    command: celery -A usuarios worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/usuarios_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
     depends_on:
-      - postgres
-      - rabbitmq
-    command: ["./entrypoint.sh"]
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./usuarios:/app
+    networks:
+      - farm_network
+
+  # Terrenos Service
+  terrenos:
+    build:
+      context: ./terrenos
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/terrenos_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,terrenos
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./terrenos:/app
+    networks:
+      - farm_network
+    ports:
+      - "8002:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Terrenos Celery Worker
+  terrenos-worker:
+    build:
+      context: ./terrenos
+      dockerfile: Dockerfile
+    command: celery -A terrenos worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/terrenos_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./terrenos:/app
+    networks:
+      - farm_network
+
+  # Maquinaria Service
+  maquinaria:
+    build:
+      context: ./maquinaria
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/maquinaria_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,maquinaria
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./maquinaria:/app
+    networks:
+      - farm_network
+    ports:
+      - "8003:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Maquinaria Celery Worker
+  maquinaria-worker:
+    build:
+      context: ./maquinaria
+      dockerfile: Dockerfile
+    command: celery -A maquinaria worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/maquinaria_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./maquinaria:/app
+    networks:
+      - farm_network
+
+  # Notificaciones Service
+  notificaciones:
+    build:
+      context: ./notificaciones
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/notificaciones_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,notificaciones
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./notificaciones:/app
+    networks:
+      - farm_network
+    ports:
+      - "8004:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Notificaciones Celery Worker
+  notificaciones-worker:
+    build:
+      context: ./notificaciones
+      dockerfile: Dockerfile
+    command: celery -A notificaciones worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/notificaciones_db
+      - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
+      - DJANGO_SECRET_KEY=your-secret-key-here
+      - DJANGO_DEBUG=True
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./notificaciones:/app
+    networks:
+      - farm_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      usuarios:
+        condition: service_healthy
+      terrenos:
+        condition: service_healthy
+      maquinaria:
+        condition: service_healthy
+      notificaciones:
+        condition: service_healthy
+    networks:
+      - farm_network
+
 volumes:
-  pgdata:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  farm_network:
+    driver: bridge 

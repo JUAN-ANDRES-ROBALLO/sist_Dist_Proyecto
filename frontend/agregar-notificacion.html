@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Notificación - Sistema Agrícola</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .success-message {
+            color: #40c057;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .help-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="section">
+            <h1>Agregar Notificación</h1>
+            <p>Usuario: <span id="user-name"></span></p>
+            <button onclick="volverNotificaciones()" class="btn btn-secondary">Volver a Notificaciones</button>
+        </div>
+
+        <div class="section">
+            <h2>Datos de la Notificación</h2>
+            <form id="agregar-notificacion-form">
+                <div class="form-group">
+                    <label for="tipo-notificacion">Tipo de Notificación:</label>
+                    <select id="tipo-notificacion" name="tipo_notificacion" required>
+                        <option value="">Seleccione el tipo</option>
+                        <option value="Recordatorio">Recordatorio</option>
+                        <option value="Alerta">Alerta</option>
+                        <option value="Información">Información</option>
+                        <option value="Urgente">Urgente</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Cosecha">Cosecha</option>
+                        <option value="Siembra">Siembra</option>
+                        <option value="Riego">Riego</option>
+                        <option value="Fertilización">Fertilización</option>
+                        <option value="Plagas">Plagas</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" maxlength="100" required>
+                    <small class="help-text">Texto, máximo 100 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mensaje">Mensaje:</label>
+                    <textarea id="mensaje" name="mensaje" maxlength="500" placeholder="Descripción detallada de la notificación..." required></textarea>
+                    <small class="help-text">Texto, máximo 500 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha-notificacion">Fecha de Notificación:</label>
+                    <input type="datetime-local" id="fecha-notificacion" name="fecha_notificacion" required>
+                    <small class="help-text">Fecha y hora (YYYY-MM-DDTHH:MM)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prioridad">Prioridad:</label>
+                    <select id="prioridad" name="prioridad" required>
+                        <option value="">Seleccione la prioridad</option>
+                        <option value="Baja">Baja</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Crítica">Crítica</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                    <button type="button" onclick="volverNotificaciones()" class="btn btn-secondary">Volver</button>
+                </div>
+            </form>
+            <div id="mensajes"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            if (userParam) {
+                try {
+                    currentUser = JSON.parse(decodeURIComponent(userParam));
+                    document.getElementById('user-name').textContent = currentUser.nombre;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    volverNotificaciones();
+                }
+            } else {
+                volverNotificaciones();
+            }
+        });
+
+        function volverNotificaciones() {
+            const url = new URL('/notificaciones.html', window.location.origin);
+            if (currentUser) {
+                url.searchParams.set('user', JSON.stringify(currentUser));
+            }
+            window.location.href = url.toString();
+        }
+
+        function mostrarMensaje(mensaje, tipo = 'success') {
+            const mensajesDiv = document.getElementById('mensajes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = tipo === 'success' ? 'success-message' : 'error-message';
+            mensajeDiv.textContent = mensaje;
+            mensajesDiv.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 5000);
+        }
+
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        document.getElementById('agregar-notificacion-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                
+                const data = {
+                    id_productor: currentUser.cedula,
+                    tipo_notificacion: formData.get('tipo_notificacion'),
+                    titulo: formData.get('titulo'),
+                    mensaje: formData.get('mensaje'),
+                    fecha_notificacion: formData.get('fecha_notificacion'),
+                    prioridad: formData.get('prioridad')
+                };
+
+                await apiCall('/api/notificaciones/agregar/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Notificación agregada exitosamente');
+                this.reset();
+                
+                // Redirigir después de 2 segundos
+                setTimeout(() => {
+                    volverNotificaciones();
+                }, 2000);
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html> 
