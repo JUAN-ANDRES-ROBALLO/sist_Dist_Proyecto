@@ -3,6 +3,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app.urls')),  # Asegurate que 'app' es el nombre de la app
-]
-
+    path('', include('notificaciones_app.urls')),
+] 

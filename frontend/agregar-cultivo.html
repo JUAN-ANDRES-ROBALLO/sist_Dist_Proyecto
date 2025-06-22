@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Cultivo - Sistema Agrícola</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .success-message {
+            color: #40c057;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .help-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="section">
+            <h1>Agregar Cultivo</h1>
+            <p>Usuario: <span id="user-name"></span></p>
+            <p>Finca: <span id="finca-name"></span></p>
+            <button onclick="volverTerrenos()" class="btn btn-secondary">Volver a Terrenos</button>
+        </div>
+
+        <div class="section">
+            <h2>Datos del Cultivo</h2>
+            <form id="agregar-cultivo-form">
+                <div class="form-group">
+                    <label for="tipo-cultivo">Tipo de Cultivo:</label>
+                    <select id="tipo-cultivo" name="tipo_cultivo" required>
+                        <option value="">Seleccione un cultivo</option>
+                        <option value="Maíz">Maíz</option>
+                        <option value="Arroz">Arroz</option>
+                        <option value="Frijol">Frijol</option>
+                        <option value="Yuca">Yuca</option>
+                        <option value="Plátano">Plátano</option>
+                        <option value="Café">Café</option>
+                        <option value="Cacao">Cacao</option>
+                        <option value="Papa">Papa</option>
+                        <option value="Tomate">Tomate</option>
+                        <option value="Lechuga">Lechuga</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="area-cultivo">Área de Cultivo (hectáreas):</label>
+                    <input type="number" id="area-cultivo" name="area_cultivo" step="0.01" min="0.01" required>
+                    <small class="help-text">Número, mínimo 0.01 hectáreas</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha-siembra">Fecha de Siembra:</label>
+                    <input type="date" id="fecha-siembra" name="fecha_siembra" required>
+                    <small class="help-text">Fecha (YYYY-MM-DD)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha-cosecha">Fecha de Cosecha:</label>
+                    <input type="date" id="fecha-cosecha" name="fecha_cosecha" required>
+                    <small class="help-text">Fecha (YYYY-MM-DD)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estado-cultivo">Estado del Cultivo:</label>
+                    <select id="estado-cultivo" name="estado_cultivo" required>
+                        <option value="">Seleccione el estado</option>
+                        <option value="Siembra">Siembra</option>
+                        <option value="Crecimiento">Crecimiento</option>
+                        <option value="Maduración">Maduración</option>
+                        <option value="Cosecha">Cosecha</option>
+                        <option value="Finalizado">Finalizado</option>
+                    </select>
+                    <small class="help-text">Seleccione de la lista</small>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                    <button type="button" onclick="volverTerrenos()" class="btn btn-secondary">Volver</button>
+                </div>
+            </form>
+            <div id="mensajes"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentFinca = null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            const fincaParam = urlParams.get('finca');
+            
+            if (userParam && fincaParam) {
+                try {
+                    currentUser = JSON.parse(decodeURIComponent(userParam));
+                    currentFinca = JSON.parse(decodeURIComponent(fincaParam));
+                    
+                    document.getElementById('user-name').textContent = currentUser.nombre;
+                    document.getElementById('finca-name').textContent = currentFinca.nombre_finca;
+                } catch (e) {
+                    console.error('Error parsing data:', e);
+                    volverTerrenos();
+                }
+            } else {
+                volverTerrenos();
+            }
+        });
+
+        function volverTerrenos() {
+            const url = new URL('/terrenos.html', window.location.origin);
+            if (currentUser) {
+                url.searchParams.set('user', JSON.stringify(currentUser));
+            }
+            window.location.href = url.toString();
+        }
+
+        function mostrarMensaje(mensaje, tipo = 'success') {
+            const mensajesDiv = document.getElementById('mensajes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = tipo === 'success' ? 'success-message' : 'error-message';
+            mensajeDiv.textContent = mensaje;
+            mensajesDiv.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 5000);
+        }
+
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        document.getElementById('agregar-cultivo-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                
+                const data = {
+                    id_finca: currentFinca.id,
+                    tipo_cultivo: formData.get('tipo_cultivo'),
+                    area_cultivo: parseFloat(formData.get('area_cultivo')),
+                    fecha_siembra: formData.get('fecha_siembra'),
+                    fecha_cosecha: formData.get('fecha_cosecha'),
+                    estado_cultivo: formData.get('estado_cultivo')
+                };
+
+                await apiCall('/api/terrenos/cultivos/agregar/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Cultivo agregado exitosamente');
+                this.reset();
+                
+                // Redirigir después de 2 segundos
+                setTimeout(() => {
+                    volverTerrenos();
+                }, 2000);
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html> 

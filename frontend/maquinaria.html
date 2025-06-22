@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Maquinaria - Sistema Agrícola</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .maquinaria-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffd43b 0%, #fcc419 100%);
+            color: #333;
+        }
+        
+        .success-message {
+            color: #40c057;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .help-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f8f9fa;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="maquinaria-container">
+        <div class="section">
+            <h1>Gestión de Maquinaria</h1>
+            <p>Bienvenido, <span id="user-name"></span></p>
+            <button onclick="volverHomepage()" class="btn btn-secondary">Volver al Homepage</button>
+        </div>
+
+        <!-- Tabs de navegación -->
+        <div class="section">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="mostrarTab('mi-maquinaria')">Mi Maquinaria</button>
+                    <button class="tab-button" onclick="mostrarTab('venta')">Maquinaria para Venta</button>
+                    <button class="tab-button" onclick="mostrarTab('servicio')">Maquinaria en Servicio</button>
+                </div>
+            </div>
+
+            <!-- Tab: Mi Maquinaria -->
+            <div id="mi-maquinaria" class="tab-content active">
+                <h2>Mi Maquinaria</h2>
+                
+                <!-- Agregar Maquinaria -->
+                <div class="form-section">
+                    <h3>Agregar Nueva Maquinaria</h3>
+                    <p>Para agregar nueva maquinaria, haga clic en el botón de abajo:</p>
+                    <button onclick="irAgregarMaquinaria()" class="btn btn-primary">Ir a Agregar Maquinaria</button>
+                </div>
+
+                <!-- Lista de Mi Maquinaria -->
+                <div class="form-section">
+                    <h3>Lista de Mi Maquinaria</h3>
+                    <button onclick="cargarMiMaquinaria()" class="btn btn-secondary">Actualizar Lista</button>
+                    <div id="mi-maquinaria-lista"></div>
+                </div>
+            </div>
+
+            <!-- Tab: Maquinaria para Venta -->
+            <div id="venta" class="tab-content">
+                <h2>Maquinaria para Venta</h2>
+                
+                <!-- Publicar Venta -->
+                <div class="form-section">
+                    <h3>Publicar Maquinaria para Venta</h3>
+                    <form id="publicar-venta-form" class="form-grid">
+                        <div class="form-group">
+                            <label for="id-maquinaria-venta">ID de Maquinaria:</label>
+                            <input type="text" id="id-maquinaria-venta" name="id_maquinaria" required>
+                            <small class="help-text">Texto, debe existir en el sistema</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="precio-venta">Precio:</label>
+                            <input type="number" id="precio-venta" name="precio" min="0" max="1000000" step="0.01" required>
+                            <small class="help-text">Número, entre 0 y 1000000</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-venta">Fecha de Publicación:</label>
+                            <input type="date" id="fecha-venta" name="fecha_v">
+                            <small class="help-text">Fecha (YYYY-MM-DD) - opcional</small>
+                        </div>
+                    </form>
+                    <button onclick="publicarVenta()" class="btn btn-success">Publicar Venta</button>
+                </div>
+
+                <!-- Lista de Ventas -->
+                <div class="form-section">
+                    <h3>Maquinaria Disponible para Compra</h3>
+                    <button onclick="cargarVentas()" class="btn btn-secondary">Actualizar Lista</button>
+                    <div id="ventas-lista"></div>
+                </div>
+            </div>
+
+            <!-- Tab: Maquinaria en Servicio -->
+            <div id="servicio" class="tab-content">
+                <h2>Maquinaria en Servicio</h2>
+                
+                <!-- Publicar Servicio -->
+                <div class="form-section">
+                    <h3>Publicar Maquinaria para Servicio</h3>
+                    <form id="publicar-servicio-form" class="form-grid">
+                        <div class="form-group">
+                            <label for="id-maquinaria-servicio">ID de Maquinaria:</label>
+                            <input type="text" id="id-maquinaria-servicio" name="id_maquinaria" required>
+                            <small class="help-text">Texto, debe existir en el sistema</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-inicio-servicio">Fecha de Inicio:</label>
+                            <input type="date" id="fecha-inicio-servicio" name="fecha_inicio" required>
+                            <small class="help-text">Fecha (YYYY-MM-DD)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-fin-servicio">Fecha de Fin:</label>
+                            <input type="date" id="fecha-fin-servicio" name="fecha_fin" required>
+                            <small class="help-text">Fecha (YYYY-MM-DD)</small>
+                        </div>
+                    </form>
+                    <button onclick="publicarServicio()" class="btn btn-warning">Publicar Servicio</button>
+                </div>
+
+                <!-- Lista de Servicios -->
+                <div class="form-section">
+                    <h3>Maquinaria Disponible para Servicio</h3>
+                    <button onclick="cargarServicios()" class="btn btn-secondary">Actualizar Lista</button>
+                    <div id="servicios-lista"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="mensajes"></div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Cargar usuario desde URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userParam = urlParams.get('user');
+            if (userParam) {
+                try {
+                    currentUser = JSON.parse(decodeURIComponent(userParam));
+                    document.getElementById('user-name').textContent = currentUser.nombre;
+                    cargarMiMaquinaria();
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    volverHomepage();
+                }
+            } else {
+                volverHomepage();
+            }
+        });
+
+        function volverHomepage() {
+            window.location.href = '/';
+        }
+
+        function mostrarTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Cargar datos según el tab
+            switch(tabName) {
+                case 'mi-maquinaria':
+                    cargarMiMaquinaria();
+                    break;
+                case 'venta':
+                    cargarVentas();
+                    break;
+                case 'servicio':
+                    cargarServicios();
+                    break;
+            }
+        }
+
+        function mostrarMensaje(mensaje, tipo = 'success') {
+            const mensajesDiv = document.getElementById('mensajes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = tipo === 'success' ? 'success-message' : 'error-message';
+            mensajeDiv.textContent = mensaje;
+            mensajesDiv.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 5000);
+        }
+
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la petición');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Funciones para Mi Maquinaria
+        function irAgregarMaquinaria() {
+            const url = new URL('/agregar-maquinaria.html', window.location.origin);
+            url.searchParams.set('user', JSON.stringify(currentUser));
+            window.location.href = url.toString();
+        }
+
+        async function agregarMaquinaria() {
+            try {
+                const form = document.getElementById('agregar-maquinaria-form');
+                const formData = new FormData(form);
+                
+                const data = {
+                    id_maquinaria: formData.get('id_maquinaria'),
+                    propietario_m: currentUser.cedula,
+                    tipo: formData.get('tipo'),
+                    marca: formData.get('marca'),
+                    modelo: formData.get('modelo'),
+                    año: parseInt(formData.get('año'))
+                };
+
+                await apiCall('/api/maquinaria/maquinaria/crear/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Maquinaria agregada exitosamente');
+                form.reset();
+                cargarMiMaquinaria();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function cargarMiMaquinaria() {
+            try {
+                const response = await apiCall(`/api/maquinaria/maquinaria/?propietario=${currentUser.cedula}`);
+                
+                const listaDiv = document.getElementById('mi-maquinaria-lista');
+                
+                if (response.maquinaria.length === 0) {
+                    listaDiv.innerHTML = '<p>No tienes maquinaria registrada</p>';
+                    return;
+                }
+
+                let tablaHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                response.maquinaria.forEach(maq => {
+                    tablaHTML += `
+                        <tr>
+                            <td>${maq.id_maquinaria}</td>
+                            <td>${maq.tipo}</td>
+                            <td>${maq.marca}</td>
+                            <td>${maq.modelo}</td>
+                            <td>${maq.año}</td>
+                            <td>
+                                <button onclick="eliminarMaquinaria('${maq.id_maquinaria}')" class="btn btn-danger btn-small">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tablaHTML += '</tbody></table>';
+                listaDiv.innerHTML = tablaHTML;
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function eliminarMaquinaria(idMaquinaria) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta maquinaria?')) {
+                return;
+            }
+
+            try {
+                await apiCall(`/api/maquinaria/maquinaria/${idMaquinaria}/eliminar/`, {
+                    method: 'DELETE'
+                });
+
+                mostrarMensaje('Maquinaria eliminada exitosamente');
+                cargarMiMaquinaria();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        // Funciones para Ventas
+        async function publicarVenta() {
+            try {
+                const form = document.getElementById('publicar-venta-form');
+                const formData = new FormData(form);
+                
+                const data = {
+                    id_maquinaria: formData.get('id_maquinaria'),
+                    propietario_v: currentUser.cedula,
+                    precio: parseFloat(formData.get('precio')),
+                    fecha_v: formData.get('fecha_v') || new Date().toISOString().split('T')[0]
+                };
+
+                await apiCall('/api/maquinaria/ventas/crear/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Venta publicada exitosamente');
+                form.reset();
+                cargarVentas();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function cargarVentas() {
+            try {
+                const response = await apiCall('/api/maquinaria/ventas/');
+                
+                const listaDiv = document.getElementById('ventas-lista');
+                
+                if (response.ventas.length === 0) {
+                    listaDiv.innerHTML = '<p>No hay maquinaria disponible para compra</p>';
+                    return;
+                }
+
+                let tablaHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID Maquinaria</th>
+                                <th>Propietario</th>
+                                <th>Precio</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                response.ventas.forEach(venta => {
+                    const puedeComprar = venta.propietario_v !== currentUser.cedula;
+                    tablaHTML += `
+                        <tr>
+                            <td>${venta.id_maquinaria}</td>
+                            <td>${venta.propietario_v}</td>
+                            <td>$${venta.precio}</td>
+                            <td>${new Date(venta.fecha_v).toLocaleDateString()}</td>
+                            <td>
+                                ${puedeComprar ? 
+                                    `<button onclick="comprarMaquinaria('${venta.id_maquinaria}', '${venta.propietario_v}')" class="btn btn-success btn-small">Comprar</button>` : 
+                                    '<span>Tu maquinaria</span>'
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tablaHTML += '</tbody></table>';
+                listaDiv.innerHTML = tablaHTML;
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function comprarMaquinaria(idMaquinaria, propietario) {
+            if (!confirm('¿Estás seguro de que quieres comprar esta maquinaria?')) {
+                return;
+            }
+
+            try {
+                // Aquí se enviaría la notificación al propietario
+                mostrarMensaje('Solicitud de compra enviada al propietario');
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        // Funciones para Servicios
+        async function publicarServicio() {
+            try {
+                const form = document.getElementById('publicar-servicio-form');
+                const formData = new FormData(form);
+                
+                const data = {
+                    id_maquinaria: formData.get('id_maquinaria'),
+                    propietario_r: currentUser.cedula,
+                    fecha_inicio: formData.get('fecha_inicio'),
+                    fecha_fin: formData.get('fecha_fin')
+                };
+
+                await apiCall('/api/maquinaria/reservas/crear/', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                mostrarMensaje('Servicio publicado exitosamente');
+                form.reset();
+                cargarServicios();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function cargarServicios() {
+            try {
+                const response = await apiCall('/api/maquinaria/reservas/');
+                
+                const listaDiv = document.getElementById('servicios-lista');
+                
+                if (response.reservas.length === 0) {
+                    listaDiv.innerHTML = '<p>No hay maquinaria disponible para servicio</p>';
+                    return;
+                }
+
+                let tablaHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID Maquinaria</th>
+                                <th>Propietario</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                response.reservas.forEach(reserva => {
+                    const puedePedir = reserva.propietario_r !== currentUser.cedula;
+                    tablaHTML += `
+                        <tr>
+                            <td>${reserva.id_maquinaria}</td>
+                            <td>${reserva.propietario_r}</td>
+                            <td>${new Date(reserva.fecha_inicio).toLocaleDateString()}</td>
+                            <td>${new Date(reserva.fecha_fin).toLocaleDateString()}</td>
+                            <td>
+                                ${puedePedir ? 
+                                    `<button onclick="pedirServicio('${reserva.id_maquinaria}', '${reserva.propietario_r}')" class="btn btn-warning btn-small">Pedir</button>` : 
+                                    '<span>Tu maquinaria</span>'
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tablaHTML += '</tbody></table>';
+                listaDiv.innerHTML = tablaHTML;
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+
+        async function pedirServicio(idMaquinaria, propietario) {
+            if (!confirm('¿Estás seguro de que quieres solicitar este servicio?')) {
+                return;
+            }
+
+            try {
+                // Aquí se enviaría la notificación al propietario
+                mostrarMensaje('Solicitud de servicio enviada al propietario');
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html> 
