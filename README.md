@@ -509,6 +509,3 @@ Si encuentras problemas al ejecutar el sistema:
 4. **Reinicia los servicios**: `docker compose restart`
 5. **Consulta la documentación**: Revisa este README completo
 
-## Licencia
-
-Este proyecto está bajo la licencia MIT. Puedes usarlo libremente para fines educativos y comerciales. 
