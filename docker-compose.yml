@@ -247,7 +247,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./frontend:/usr/share/nginx/html
+      - ./FrontEnd:/usr/share/nginx/html
     depends_on:
       usuarios:
         condition: service_healthy
@@ -257,6 +257,20 @@ services:
         condition: service_healthy
       notificaciones:
         condition: service_healthy
+    networks:
+      - farm_network
+
+  # Frontend Development Server
+  frontend:
+    build: ./FrontEnd
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./FrontEnd:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost
+    command: npm run dev -- --host
     networks:
       - farm_network
 

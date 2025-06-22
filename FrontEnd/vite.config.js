@@ -8,6 +8,13 @@ export default defineConfig({
     watch: {
       usePolling: true,
       interval: 1000, // revisa cada 1 segundo
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost',
+        changeOrigin: true,
+        secure: false,
+      }
     }
   }
 })
