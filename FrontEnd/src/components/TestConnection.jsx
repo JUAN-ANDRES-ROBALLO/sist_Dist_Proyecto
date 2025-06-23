@@ -52,7 +52,7 @@ export default function TestConnection() {
 
       // Test 6: Listar fincas
       try {
-        const fincas = await terrenosService.getFincas()
+        const fincas = await terrenosService.getFincas('12345678')
         results.fincasList = { success: true, data: fincas }
       } catch (error) {
         results.fincasList = { success: false, error: error.message }
@@ -60,7 +60,7 @@ export default function TestConnection() {
 
       // Test 7: Listar maquinaria
       try {
-        const maquinaria = await maquinariaService.getAll()
+        const maquinaria = await maquinariaService.getAll('12345678')
         results.maquinariaList = { success: true, data: maquinaria }
       } catch (error) {
         results.maquinariaList = { success: false, error: error.message }
@@ -68,7 +68,7 @@ export default function TestConnection() {
 
       // Test 8: Listar notificaciones
       try {
-        const notificaciones = await notificacionesService.getAll()
+        const notificaciones = await notificacionesService.getAll('12345678')
         results.notificacionesList = { success: true, data: notificaciones }
       } catch (error) {
         results.notificacionesList = { success: false, error: error.message }

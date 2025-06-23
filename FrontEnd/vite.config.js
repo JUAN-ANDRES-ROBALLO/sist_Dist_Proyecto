@@ -5,16 +5,29 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: '0.0.0.0', // Exponer a la red
+    port: 5173,
     watch: {
       usePolling: true,
       interval: 1000, // revisa cada 1 segundo
     },
     proxy: {
-      '/api': {
-        target: 'http://localhost',
+      '/api/usuarios': {
+        target: 'http://usuarios:8000',
         changeOrigin: true,
-        secure: false,
-      }
+      },
+      '/api/terrenos': {
+        target: 'http://terrenos:8000',
+        changeOrigin: true,
+      },
+      '/api/maquinaria': {
+        target: 'http://maquinaria:8000',
+        changeOrigin: true,
+      },
+      '/api/notificaciones': {
+        target: 'http://notificaciones:8000',
+        changeOrigin: true,
+      },
     }
   }
 })

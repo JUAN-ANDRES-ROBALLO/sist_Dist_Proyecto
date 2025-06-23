@@ -1,5 +1,7 @@
 // Configuración base para las llamadas a la API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost';
+// Ya no necesitamos una URL base explícita, usaremos rutas relativas
+// para que el proxy de Vite se encargue de todo.
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost';
 
 // Configuración de headers comunes
 const getHeaders = () => ({
@@ -10,7 +12,9 @@ const getHeaders = () => ({
 
 // Función helper para hacer peticiones HTTP
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // La URL ahora es simplemente el endpoint. El navegador lo resolverá
+  // relativamente al host actual (ej: http://localhost:5173/api/usuarios/health)
+  const url = endpoint;
   const config = {
     headers: getHeaders(),
     ...options,
@@ -70,7 +74,7 @@ export const terrenosService = {
   health: () => apiRequest('/api/terrenos/health/'),
   
   // Fincas
-  getFincas: () => apiRequest('/api/terrenos/fincas/'),
+  getFincas: (id_productor) => apiRequest(`/api/terrenos/fincas/?id_productor=${id_productor}`),
   createFinca: (fincaData) => apiRequest('/api/terrenos/fincas/agregar/', {
     method: 'POST',
     body: JSON.stringify(fincaData),
@@ -105,7 +109,7 @@ export const maquinariaService = {
   health: () => apiRequest('/api/maquinaria/health/'),
   
   // Maquinaria
-  getAll: () => apiRequest('/api/maquinaria/maquinaria/'),
+  getAll: (propietario) => apiRequest(`/api/maquinaria/maquinaria/?propietario=${propietario}`),
   create: (maquinariaData) => apiRequest('/api/maquinaria/maquinaria/crear/', {
     method: 'POST',
     body: JSON.stringify(maquinariaData),
@@ -135,7 +139,7 @@ export const notificacionesService = {
   health: () => apiRequest('/api/notificaciones/health/'),
   
   // Notificaciones
-  getAll: () => apiRequest('/api/notificaciones/notificaciones/'),
+  getAll: (cedula) => apiRequest(`/api/notificaciones/notificaciones/?cedula=${cedula}`),
   create: (notificacionData) => apiRequest('/api/notificaciones/notificaciones/crear/', {
     method: 'POST',
     body: JSON.stringify(notificacionData),
