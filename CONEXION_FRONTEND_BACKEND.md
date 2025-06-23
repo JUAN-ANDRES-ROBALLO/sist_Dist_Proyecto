@@ -22,243 +22,111 @@
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ Arquitectura y Flujo de Desarrollo
 
-### **Arquitectura de Microservicios**
+El sistema está diseñado con una arquitectura de microservicios, lo que nos da flexibilidad y escalabilidad. Para el desarrollo, hemos creado un flujo de trabajo que nos permite trabajar de forma eficiente.
 
-El sistema está diseñado siguiendo una arquitectura de microservicios distribuidos, donde cada servicio tiene responsabilidades específicas y puede escalar independientemente.
+### **Diagrama de Arquitectura de Desarrollo**
+
+En el entorno de desarrollo (`docker-compose.yml`), la comunicación se gestiona a través del **servidor de desarrollo de Vite**, que actúa como un proxy inteligente.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND (React + Vite)                  │
+│                    NAVEGADOR DEL USUARIO                    │
 │                    http://localhost:5173                    │
 └─────────────────────┬───────────────────────────────────────┘
+                      │ (Peticiones a /api/*)
                       │
 ┌─────────────────────▼───────────────────────────────────────┐
-│                    NGINX (Proxy Reverso)                    │
-│                    http://localhost:80                      │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────┐
-│                    MICROSERVICIOS                           │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────┐ │
-│  │   USUARIOS  │ │  TERRENOS   │ │ MAQUINARIA  │ │NOTIFICA.│ │
-│  │   :8001     │ │   :8002     │ │   :8003     │ │ :8004   │ │
-│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────┘ │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────┐
-│                    INFRAESTRUCTURA                          │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐            │
-│  │  POSTGRES   │ │  RABBITMQ   │ │   CELERY    │            │
-│  │   :5432     │ │   :5672     │ │  WORKERS    │            │
-│  └─────────────┘ └─────────────┘ └─────────────┘            │
+│              FRONTEND (Servidor de Desarrollo Vite)         │
+│         Proxy Inteligente (configurado en vite.config.js)   │
+└────┬──────────────────────────┬──────────────────────────┬───┘
+     │ /api/usuarios            │ /api/terrenos            │ ...
+     │                          │                          │
+┌────▼───────────┐   ┌──────────▼────────┐   ┌────────────▼───┐
+│ RED INTERNA DE DOCKER (farm_network)                      │
+│   ┌───────────┐      ┌───────────┐      ┌──────────────┐   │
+│   │ SERVICIO  │      │ SERVICIO  │      │   SERVICIO   │   │
+│   │ USUARIOS  │      │ TERRENOS  │      │  MAQUINARIA  │   │
+│   │ :8000     │      │ :8000     │      │   :8000      │   │
+│   └───────────┘      └───────────┘      └──────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### **Componentes de la Arquitectura**
+### **Flujo de Conexión en Desarrollo**
 
-#### **1. Frontend (React + Vite)**
-- **Tecnología**: React 18, Vite, CSS3
-- **Puerto**: 5173 (desarrollo), 80 (producción)
-- **Características**:
-  - Interfaz moderna y responsiva
-  - Componentes modulares
-  - Estado local con React Hooks
-  - Proxy de desarrollo para APIs
+1.  **Arranque**: El desarrollador ejecuta `docker-compose up` desde la raíz del proyecto.
+2.  **Acceso**: Se accede a la aplicación a través de `http://localhost:5173` en el navegador.
+3.  **Petición API**: El código del frontend (p. ej., en `src/services/api.js`) realiza una petición a una ruta relativa, como `await apiRequest('/api/usuarios/health/')`.
+4.  **Intercepción del Proxy**: El servidor de Vite, que corre en el contenedor `frontend`, intercepta esta llamada. Su configuración en `vite.config.js` le dice cómo manejar las rutas que empiezan por `/api`.
+5.  **Redirección**: Vite reescribe la URL y redirige la petición al servicio de backend correspondiente dentro de la red interna de Docker. Por ejemplo:
+    *   Una llamada a `/api/usuarios/health/` se convierte en una petición a `http://usuarios:8000/health/`.
+    *   Una llamada a `/api/terrenos/fincas/` se convierte en `http://terrenos:8000/fincas/`.
+6.  **Respuesta del Backend**: El servicio de Django recibe la petición en su puerto `8000` interno, la procesa y devuelve la respuesta, que sigue el camino inverso hasta el navegador.
 
-#### **2. Backend (Django + DRF)**
-- **Tecnología**: Django 4.x, Django REST Framework
-- **Patrón**: API REST con microservicios
-- **Características**:
-  - Autenticación personalizada
-  - Serializers para validación
-  - Permisos granulares
-  - Logging y manejo de errores
+### **Componentes Clave de la Conexión**
 
-#### **3. Base de Datos (PostgreSQL)**
-- **Tecnología**: PostgreSQL 15
-- **Características**:
-  - Base de datos relacional robusta
-  - Transacciones ACID
-  - Índices optimizados
-  - Backup automático
+#### **1. `docker-compose.yml`**
+- Es el **único archivo** que orquesta todos los servicios.
+- Define los servicios (`usuarios`, `terrenos`, `frontend`, etc.), sus variables de entorno, redes y dependencias.
+- Expone el puerto `5173` del contenedor `frontend` al `localhost` del desarrollador.
 
-#### **4. Message Broker (RabbitMQ)**
-- **Tecnología**: RabbitMQ 3.12
-- **Propósito**: Comunicación asíncrona entre servicios
-- **Características**:
-  - Colas de mensajes
-  - Publicación/suscripción
-  - Persistencia de mensajes
+#### **2. `vite.config.js`**
+- Contiene la configuración del `proxy` que hace posible la comunicación.
+- Es la pieza mágica que traduce las llamadas del frontend a la red de Docker.
+- Ejemplo de configuración del proxy:
+  ```javascript
+  server: {
+    // ...
+    proxy: {
+      '/api/usuarios': {
+        target: 'http://usuarios:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/usuarios/, ''),
+      },
+      // ... otras reglas de proxy
+    }
+  }
+  ```
 
-#### **5. Task Queue (Celery)**
-- **Tecnología**: Celery con Redis/RabbitMQ
-- **Propósito**: Procesamiento de tareas asíncronas
-- **Tareas**:
-  - Envío de notificaciones
-  - Procesamiento de datos
-  - Reportes automáticos
+#### **3. `settings.py` (en cada servicio de Django)**
+- Para facilitar el desarrollo, la directiva `ALLOWED_HOSTS` se ha configurado para ser permisiva dentro del código.
+- Específicamente, en los archivos `settings.py` de cada servicio, se ha añadido `'*'` a la lista, lo que permite que los servicios acepten peticiones desde cualquier origen dentro de la red de Docker.
+  ```python
+  ALLOWED_HOSTS = ['*'] # ¡Solo para desarrollo!
+  ```
+- **Nota para Producción**: En un entorno real, `ALLOWED_HOSTS` debe restringirse a los dominios específicos desde los que se servirá la aplicación.
 
-#### **6. Proxy Reverso (Nginx)**
-- **Tecnología**: Nginx 1.25
-- **Propósito**: Enrutamiento y balanceo de carga
-- **Características**:
-  - Rate limiting
-  - Compresión gzip
-  - Headers de seguridad
-  - SSL termination
+### **Rol de Nginx (para Producción)**
 
----
+El archivo `docker-compose.yml` tiene un servicio `nginx` que está **comentado y desactivado** en el entorno de desarrollo. En un **entorno de producción**, su rol es fundamental:
 
-## 📡 Sistemas de Comunicación
-
-### **1. Comunicación Síncrona (HTTP/REST)**
-
-#### **APIs REST**
-```javascript
-// Ejemplo de comunicación síncrona
-const response = await fetch('/api/usuarios/login/', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
-});
-```
-
-#### **Endpoints Principales**
-- **Usuarios**: `/api/usuarios/*`
-- **Terrenos**: `/api/terrenos/*`
-- **Maquinaria**: `/api/maquinaria/*`
-- **Notificaciones**: `/api/notificaciones/*`
-
-### **2. Comunicación Asíncrona (RabbitMQ + Celery)**
-
-#### **Colas de Mensajes**
-```python
-# Ejemplo de tarea asíncrona
-@shared_task
-def enviar_notificacion_usuario(cedula, mensaje):
-    # Procesamiento asíncrono
-    pass
-```
-
-#### **Tipos de Mensajes**
-- **Notificaciones**: Alertas y comunicaciones
-- **Reportes**: Generación automática de informes
-- **Sincronización**: Actualización de datos entre servicios
-
-### **3. Comunicación en Tiempo Real (WebSockets)**
-
-#### **WebSocket Channels**
-```python
-# Ejemplo de consumer WebSocket
-class NotificacionConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-    
-    async def notify(self, event):
-        await self.send(text_data=json.dumps(event))
-```
+- **Actúa como Reverse Proxy**: Se convierte en el único punto de entrada a la aplicación (puerto 80/443).
+- **Enruta el Tráfico**: Reemplaza la función del proxy de Vite, dirigiendo las peticiones `/api/*` a los servicios de backend correspondientes.
+- **Sirve el Frontend**: En lugar de usar el servidor de desarrollo de Vite, Nginx sirve la versión compilada y optimizada (`build`) del frontend.
 
 ---
 
-## 📁 Sistema de Ficheros
-
-### **Estructura del Proyecto**
+## 📁 Sistema de Ficheros (Simplificado)
 ```
 sist_Dist_Proyecto/
-├── 📁 FrontEnd/                          # Frontend React + Vite
-│   ├── 📁 src/
-│   │   ├── 📁 components/                # Componentes React
-│   │   │   ├── Header.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   ├── LoginModal.jsx
-│   │   │   ├── RegisterModal.jsx
-│   │   │   ├── TestConnection.jsx
-│   │   │   └── ...
-│   │   ├── 📁 services/                  # Servicios API
-│   │   │   └── api.js
-│   │   ├── 📁 styles/                    # Estilos CSS
-│   │   │   ├── App.css
-│   │   │   └── ...
-│   │   ├── 📁 assets/                    # Recursos estáticos
-│   │   │   ├── 📁 icons/
-│   │   │   ├── 📁 video/
-│   │   │   └── 📁 cultivos/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── 📁 public/                        # Archivos públicos
-│   │   ├── 📁 cultivos/
-│   │   └── 📁 maquinaria/
-│   ├── package.json
-│   ├── vite.config.js
-│   └── Dockerfile
+├── 📁 FrontEnd/
+│   ├── vite.config.js         # <-- Configuración del proxy
+│   └── src/services/api.js    # <-- Lógica de llamadas a la API
 │
-├── 📁 usuarios/                          # Microservicio Usuarios
-│   ├── 📁 usuarios_app/
-│   │   ├── models.py                     # Modelo Usuario
-│   │   ├── views.py                      # Vistas API
-│   │   ├── serializers.py                # Serializers DRF
-│   │   ├── urls.py                       # Rutas URL
-│   │   └── tasks.py                      # Tareas Celery
-│   ├── 📁 usuarios/
-│   │   ├── settings.py                   # Configuración Django
-│   │   ├── urls.py                       # URLs principales
-│   │   └── celery.py                     # Configuración Celery
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── startup.sh
+├── 📁 usuarios/
+│   └── usuarios/settings.py   # <-- ALLOWED_HOSTS
 │
-├── 📁 terrenos/                          # Microservicio Terrenos
-│   ├── 📁 terrenos_app/
-│   │   ├── models.py                     # Modelos: Finca, Parcela, Cultivo
-│   │   ├── views.py                      # Vistas API
-│   │   ├── serializers.py                # Serializers
-│   │   └── urls.py                       # Rutas
-│   ├── 📁 terrenos/
-│   │   ├── settings.py
-│   │   └── urls.py
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── startup.sh
+├── 📁 terrenos/
+│   └── terrenos/settings.py   # <-- ALLOWED_HOSTS
 │
-├── 📁 maquinaria/                        # Microservicio Maquinaria
-│   ├── 📁 maquinaria_app/
-│   │   ├── models.py                     # Modelos: Maquinaria, Venta, Reserva
-│   │   ├── views.py                      # Vistas API
-│   │   ├── serializers.py                # Serializers
-│   │   └── urls.py                       # Rutas
-│   ├── 📁 maquinaria/
-│   │   ├── settings.py
-│   │   └── urls.py
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── startup.sh
+├── 📁 maquinaria/
+│   └── maquinaria/settings.py # <-- ALLOWED_HOSTS
 │
-├── 📁 notificaciones/                    # Microservicio Notificaciones
-│   ├── 📁 notificaciones_app/
-│   │   ├── models.py                     # Modelo Notificación
-│   │   ├── views.py                      # Vistas API
-│   │   ├── serializers.py                # Serializers
-│   │   └── urls.py                       # Rutas
-│   ├── 📁 notificaciones/
-│   │   ├── settings.py
-│   │   └── urls.py
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── startup.sh
+├── 📁 notificaciones/
+│   └── notificaciones/settings.py # <-- ALLOWED_HOSTS
 │
-├── 📁 nginx/                             # Configuración Nginx
-│   └── nginx.conf                        # Proxy reverso
-│
-├── 📄 docker-compose.yml                 # Orquestación Docker
-├── 📄 docker-compose-simple.yml          # Versión simplificada
-├── 📄 start.sh                           # Script de inicio
-├── 📄 start-fast.sh                      # Script de inicio rápido
-├── 📄 init-db.sql                        # Inicialización BD
-├── 📄 CAMPOS_FORMULARIOS.md              # Documentación campos
-├── 📄 README.md                          # Documentación general
-└── 📄 CONEXION_FRONTEND_BACKEND.md       # Esta documentación
+└── docker-compose.yml         # <-- Orquestador principal
 ```
 
 ### **Gestión de Archivos Estáticos**

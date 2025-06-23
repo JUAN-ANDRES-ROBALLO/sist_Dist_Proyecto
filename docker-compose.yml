@@ -45,12 +45,13 @@ services:
     build:
       context: ./usuarios
       dockerfile: Dockerfile
+    command: ["/bin/sh", "-c", "/app/startup.sh"]
     environment:
       - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/usuarios_db
       - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
       - DJANGO_SECRET_KEY=your-secret-key-here
       - DJANGO_DEBUG=True
-      - ALLOWED_HOSTS=localhost,127.0.0.1,usuarios
+      # - ALLOWED_HOSTS=localhost,127.0.0.1,usuarios
     depends_on:
       postgres:
         condition: service_healthy
@@ -95,12 +96,13 @@ services:
     build:
       context: ./terrenos
       dockerfile: Dockerfile
+    command: ["/bin/sh", "-c", "/app/startup.sh"]
     environment:
       - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/terrenos_db
       - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
       - DJANGO_SECRET_KEY=your-secret-key-here
       - DJANGO_DEBUG=True
-      - ALLOWED_HOSTS=localhost,127.0.0.1,terrenos
+      # - ALLOWED_HOSTS=localhost,127.0.0.1,terrenos
     depends_on:
       postgres:
         condition: service_healthy
@@ -145,12 +147,13 @@ services:
     build:
       context: ./maquinaria
       dockerfile: Dockerfile
+    command: ["/bin/sh", "-c", "/app/startup.sh"]
     environment:
       - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/maquinaria_db
       - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
       - DJANGO_SECRET_KEY=your-secret-key-here
       - DJANGO_DEBUG=True
-      - ALLOWED_HOSTS=localhost,127.0.0.1,maquinaria
+      # - ALLOWED_HOSTS=localhost,127.0.0.1,maquinaria
     depends_on:
       postgres:
         condition: service_healthy
@@ -195,12 +198,13 @@ services:
     build:
       context: ./notificaciones
       dockerfile: Dockerfile
+    command: ["/bin/sh", "-c", "/app/startup.sh"]
     environment:
       - DATABASE_URL=postgresql://farm_user:farm_password@postgres:5432/notificaciones_db
       - RABBITMQ_URL=amqp://farm_user:farm_password@rabbitmq:5672/
       - DJANGO_SECRET_KEY=your-secret-key-here
       - DJANGO_DEBUG=True
-      - ALLOWED_HOSTS=localhost,127.0.0.1,notificaciones
+      # - ALLOWED_HOSTS=localhost,127.0.0.1,notificaciones
     depends_on:
       postgres:
         condition: service_healthy
@@ -241,38 +245,38 @@ services:
       - farm_network
 
   # Nginx Reverse Proxy
-  nginx:
-    image: nginx:1.25-alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./FrontEnd:/usr/share/nginx/html
-    depends_on:
-      usuarios:
-        condition: service_healthy
-      terrenos:
-        condition: service_healthy
-      maquinaria:
-        condition: service_healthy
-      notificaciones:
-        condition: service_healthy
-    networks:
-      - farm_network
+  # nginx:
+  #   image: nginx:1.25-alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./FrontEnd:/usr/share/nginx/html
+  #   networks:
+  #     - farm_network
+  #   depends_on:
+  #     - usuarios
+  #     - terrenos
+  #     - maquinaria
+  #     - notificaciones
+  #     - frontend
 
-  # Frontend Development Server
   frontend:
-    build: ./FrontEnd
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
     ports:
       - "5173:5173"
     volumes:
       - ./FrontEnd:/app
       - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost
-    command: npm run dev -- --host
     networks:
       - farm_network
+    depends_on:
+      - usuarios
+      - terrenos
+      - maquinaria
+      - notificaciones
 
 volumes:
   postgres_data:
